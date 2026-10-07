@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+  <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
+  <UseWindowsForms>true</UseWindowsForms><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+  <AssemblyName>CodexReceipt</AssemblyName><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  <Version>1.0.0</Version><Product>Codex Receipt</Product><Description>Desktop receipts for local Codex usage</Description>
+  <DebugType>none</DebugType><DebugSymbols>false</DebugSymbols>
+  <DefineConstants Condition="'$(PortableRelease)' == 'true'">$(DefineConstants);PORTABLE</DefineConstants>
+  <DefaultItemExcludes>$(DefaultItemExcludes);publish-build\**;export\**;.verification\**;test-fixtures\**</DefaultItemExcludes>
+ </PropertyGroup>
+ <ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup>
+ <ItemGroup><EmbeddedResource Include="ui.zip" LogicalName="ReceiptTray.ui.zip" /></ItemGroup>
+ <ItemGroup Condition="'$(PortableRelease)' == 'true'"><Compile Remove="SelfTest.cs" /></ItemGroup>
+ <Target Name="ExcludeUnusedWpfReference" BeforeTargets="ResolveAssemblyReferences">
+  <ItemGroup><Reference Remove="@(Reference)" Condition="'%(Reference.Filename)' == 'Microsoft.Web.WebView2.Wpf'" /></ItemGroup>
+ </Target>
+</Project>

@@ -1,0 +1,2 @@
+Codex monochrome logo artwork: community-maintained @lobehub/icons-static-svg, distributed by https://asvg.app/icons/codex
+Stored SVG paths are reproduced without redrawing.

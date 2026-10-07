@@ -1,0 +1,628 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<div id="api-receipt-preview"><div class="viz-carousel viz-dotted-background" aria-label="连续小票与警告票" data-previous-label="上一款" data-next-label="下一款"><section data-variant="API 消费" aria-label="API 消费纸带"></section><section data-variant="Codex 额度" aria-label="Codex 额度纸带" hidden></section></div></div>
+<style>
+#api-receipt-preview{font-family:'Segoe UI','Microsoft YaHei',sans-serif;color:light-dark(#252525,#e7e7e7);--paper:light-dark(#fffdf6,#292925);--ink:light-dark(#33342f,#e6e4d8);--muted-ink:light-dark(#727369,#aaa99d);--paper-line:light-dark(#bdbeb3,#67675b);--machine:light-dark(#e7e8e9,#333537)}
+#api-receipt-preview *{box-sizing:border-box}
+#api-receipt-preview .scene{height:790px;position:relative;padding:18px;overflow:hidden}
+#api-receipt-preview .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-right:64px;font-size:12px}
+#api-receipt-preview button,#api-receipt-preview select{font:inherit;color:inherit;background:light-dark(#fafafa,#303234);border:1px solid light-dark(#d5d6d7,#595b5d);border-radius:6px;padding:7px 10px}
+#api-receipt-preview button:disabled{opacity:.5}
+#api-receipt-preview .controls label{display:flex;align-items:center;gap:5px}
+#api-receipt-preview input{accent-color:light-dark(#404a45,#bccbc1)}
+#api-receipt-preview .example{margin-top:8px;font-size:11px;color:light-dark(#626563,#a9aeab)}
+#api-receipt-preview .assembly{position:absolute;right:22px;bottom:28px;width:min(314px,calc(100% - 44px))}
+#api-receipt-preview .window{height:604px;position:absolute;bottom:29px;left:0;right:0;overflow:hidden;isolation:isolate}
+#api-receipt-preview .strip{position:absolute;bottom:0;left:12px;width:calc(100% - 24px);transform:translateY(0)}
+#api-receipt-preview .paper{position:relative;width:100%;margin:0;padding:18px 18px 20px;background:var(--paper);color:var(--ink);font:13px/1.35 'DotGothic16','SimHei',monospace;font-synthesis:none;font-variant-numeric:tabular-nums;letter-spacing:.1px;border-top:1px dashed var(--paper-line)}
+#api-receipt-preview .paper:first-child{border-top:0}
+#api-receipt-preview .paper + .paper::before{content:'';position:absolute;top:-2px;left:0;right:0;height:4px;background:radial-gradient(circle at 2px 2px,var(--paper-line) 1px,transparent 1.2px) 0 0/8px 4px;pointer-events:none}
+#api-receipt-preview .paper.yellow{--paper:light-dark(#ffdf78,#735715);--ink:light-dark(#382706,#fff0b3);--muted-ink:light-dark(#594411,#f0d789);--paper-line:light-dark(#b59134,#b09245)}
+#api-receipt-preview .paper.red{--paper:light-dark(#ffc0b4,#812720);--ink:light-dark(#681710,#fff0e9);--muted-ink:light-dark(#802c20,#f4cbbf);--paper-line:light-dark(#c57765,#c07a68)}
+#api-receipt-preview .paper.accordion{padding:0;border:0;background:transparent;overflow:visible;transform-style:preserve-3d}
+#api-receipt-preview .paper.accordion::before{display:none}
+#api-receipt-preview .fold-panel{position:absolute;left:0;width:100%;overflow:hidden;transform-origin:50% 0;backface-visibility:visible;background:var(--paper)}
+#api-receipt-preview .fold-panel::after{content:'';position:absolute;inset:0;pointer-events:none;background:light-dark(#342b16,#000);opacity:var(--crease-shade,0)}
+#api-receipt-preview .fold-slice{position:absolute;left:0;width:100%;}
+#api-receipt-preview .fold-slice>.paper{border-top:0;min-height:100%;}
+#api-receipt-preview .crease-line{position:absolute;left:0;width:100%;height:1px;background:var(--paper-line);pointer-events:none;}
+#api-receipt-preview .brand{text-align:center;font-size:14px;letter-spacing:2px}
+#api-receipt-preview .subtitle{text-align:center;color:var(--muted-ink);font:13px 'VT323',monospace;letter-spacing:2px;margin:3px 0 12px}
+#api-receipt-preview .pair{display:flex;justify-content:space-between;gap:8px;margin:4px 0;align-items:baseline}
+#api-receipt-preview .pair>:last-child{text-align:right}
+#api-receipt-preview .muted,#api-receipt-preview .detail{color:var(--muted-ink)}
+#api-receipt-preview .detail{font-size:11px;margin:4px 0}
+#api-receipt-preview .rule{border-top:1px dashed var(--paper-line);margin:11px 0}
+#api-receipt-preview .hero-label{font-size:12px;color:var(--muted-ink);margin-top:3px}
+#api-receipt-preview .hero-number{font:42px/1.1 'VT323',monospace;margin:2px 0 7px}
+#api-receipt-preview .hero-number small{font:11px 'DotGothic16',monospace;margin-left:6px}
+#api-receipt-preview .metric{font:28px/1.2 'VT323',monospace;white-space:nowrap}
+#api-receipt-preview .foot{font-size:11px;text-align:center;color:var(--muted-ink);margin-top:11px}
+#api-receipt-preview .quota-row{display:flex;align-items:center;gap:5px;margin:8px 0 6px}
+#api-receipt-preview .quota-bracket{flex:none;font:24px/1 'VT323',monospace;color:var(--ink)}
+#api-receipt-preview .quota-bar{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;flex:1;min-width:0}
+#api-receipt-preview .quota-cell{aspect-ratio:1;display:block;background:color-mix(in srgb,var(--ink) 14%,var(--paper));overflow:hidden}
+#api-receipt-preview .quota-fill{display:block;height:100%;background:var(--ink)}
+#api-receipt-preview .times{font-size:11px;margin-top:8px}
+#api-receipt-preview .times time{font-family:Consolas,monospace;white-space:nowrap;font-variant-numeric:tabular-nums}
+#api-receipt-preview .alert-title{background:var(--ink);color:var(--paper);text-align:center;font-size:21px;font-weight:700;font-synthesis:weight;line-height:1.5;letter-spacing:2px;padding:8px 4px;margin:0 0 18px}
+#api-receipt-preview .alert-label{text-align:center;font-size:12px;letter-spacing:2px}
+#api-receipt-preview .alert-value{text-align:center;font:56px/1.1 'VT323',monospace;margin:3px 0 12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#api-receipt-preview .alert-value small{font:11px 'DotGothic16',monospace;margin-left:5px}
+#api-receipt-preview .alert-countdown{font:22px/1.2 'VT323',monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+#api-receipt-preview .machine{position:relative;height:40px;border-radius:9px;background:var(--machine);border:1px solid light-dark(#cccfd0,#505355);box-shadow:0 5px 12px #0002;padding:7px 13px}
+#api-receipt-preview .slot{height:5px;border-radius:3px;background:light-dark(#555a57,#121714)}
+#api-receipt-preview .machine-label{display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:2px;color:light-dark(#606562,#abb3ae);margin-top:6px}
+#api-receipt-preview .lamp{width:5px;height:5px;background:light-dark(#5d8067,#92ad9a);border-radius:50%}
+#api-receipt-preview .status{position:absolute;left:18px;bottom:7px;font-size:11px;color:light-dark(#626563,#a9aeab)}
+#api-receipt-preview .readback{position:absolute;inset:146px 14px 63px;z-index:30;background:light-dark(#eeefed,#242625);border:1px solid light-dark(#cccfc9,#585b55);border-radius:8px;display:flex;flex-direction:column;padding:12px}
+#api-receipt-preview .readback[hidden]{display:none}
+#api-receipt-preview .readback-nav{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:12px;margin-bottom:10px}
+#api-receipt-preview .readback-content{overflow:auto;flex:1}
+#api-receipt-preview .readback .paper{max-width:302px;margin:auto}
+@media(max-width:400px){#api-receipt-preview .scene{padding:14px;height:820px}#api-receipt-preview .controls{padding-right:0}#api-receipt-preview .assembly{right:14px;width:calc(100% - 28px)}#api-receipt-preview .readback{top:164px}}
+</style>
+<style>
+@font-face{font-family:'DotGothic16';src:url('fonts/DotGothic16-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'VT323';src:url('fonts/VT323-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}
+:root{color-scheme:light}html,body{margin:0;background:transparent;overflow:hidden}
+#api-receipt-preview .scene{height:100vh;padding:0}
+#api-receipt-preview .controls,#api-receipt-preview .example,#api-receipt-preview .status,#api-receipt-preview .machine,#api-receipt-preview .readback{display:none!important}
+#api-receipt-preview button{padding:5px 7px}
+#api-receipt-preview .assembly{width:100%;right:0;bottom:0}
+#api-receipt-preview .window{height:100vh;bottom:0}
+#api-receipt-preview .strip{left:auto;right:3px;width:290px}
+#api-receipt-preview .brand,#api-receipt-preview .subtitle,#api-receipt-preview .hero-label,#api-receipt-preview .alert-title,#api-receipt-preview .alert-label{white-space:nowrap}
+#api-receipt-preview .paper:not(.accordion){clip-path:polygon(0% 2px,1% 0px,2% 2px,3% 0px,4% 2px,5% 0px,6% 2px,7% 0px,8% 2px,9% 0px,10% 2px,11% 0px,12% 2px,13% 0px,14% 2px,15% 0px,16% 2px,17% 0px,18% 2px,19% 0px,20% 2px,21% 0px,22% 2px,23% 0px,24% 2px,25% 0px,26% 2px,27% 0px,28% 2px,29% 0px,30% 2px,31% 0px,32% 2px,33% 0px,34% 2px,35% 0px,36% 2px,37% 0px,38% 2px,39% 0px,40% 2px,41% 0px,42% 2px,43% 0px,44% 2px,45% 0px,46% 2px,47% 0px,48% 2px,49% 0px,50% 2px,51% 0px,52% 2px,53% 0px,54% 2px,55% 0px,56% 2px,57% 0px,58% 2px,59% 0px,60% 2px,61% 0px,62% 2px,63% 0px,64% 2px,65% 0px,66% 2px,67% 0px,68% 2px,69% 0px,70% 2px,71% 0px,72% 2px,73% 0px,74% 2px,75% 0px,76% 2px,77% 0px,78% 2px,79% 0px,80% 2px,81% 0px,82% 2px,83% 0px,84% 2px,85% 0px,86% 2px,87% 0px,88% 2px,89% 0px,90% 2px,91% 0px,92% 2px,93% 0px,94% 2px,95% 0px,96% 2px,97% 0px,98% 2px,99% 0px,100% 2px,100% calc(100% - 2px),99% 100%,98% calc(100% - 2px),97% 100%,96% calc(100% - 2px),95% 100%,94% calc(100% - 2px),93% 100%,92% calc(100% - 2px),91% 100%,90% calc(100% - 2px),89% 100%,88% calc(100% - 2px),87% 100%,86% calc(100% - 2px),85% 100%,84% calc(100% - 2px),83% 100%,82% calc(100% - 2px),81% 100%,80% calc(100% - 2px),79% 100%,78% calc(100% - 2px),77% 100%,76% calc(100% - 2px),75% 100%,74% calc(100% - 2px),73% 100%,72% calc(100% - 2px),71% 100%,70% calc(100% - 2px),69% 100%,68% calc(100% - 2px),67% 100%,66% calc(100% - 2px),65% 100%,64% calc(100% - 2px),63% 100%,62% calc(100% - 2px),61% 100%,60% calc(100% - 2px),59% 100%,58% calc(100% - 2px),57% 100%,56% calc(100% - 2px),55% 100%,54% calc(100% - 2px),53% 100%,52% calc(100% - 2px),51% 100%,50% calc(100% - 2px),49% 100%,48% calc(100% - 2px),47% 100%,46% calc(100% - 2px),45% 100%,44% calc(100% - 2px),43% 100%,42% calc(100% - 2px),41% 100%,40% calc(100% - 2px),39% 100%,38% calc(100% - 2px),37% 100%,36% calc(100% - 2px),35% 100%,34% calc(100% - 2px),33% 100%,32% calc(100% - 2px),31% 100%,30% calc(100% - 2px),29% 100%,28% calc(100% - 2px),27% 100%,26% calc(100% - 2px),25% 100%,24% calc(100% - 2px),23% 100%,22% calc(100% - 2px),21% 100%,20% calc(100% - 2px),19% 100%,18% calc(100% - 2px),17% 100%,16% calc(100% - 2px),15% 100%,14% calc(100% - 2px),13% 100%,12% calc(100% - 2px),11% 100%,10% calc(100% - 2px),9% 100%,8% calc(100% - 2px),7% 100%,6% calc(100% - 2px),5% 100%,4% calc(100% - 2px),3% 100%,2% calc(100% - 2px),1% 100%,0% calc(100% - 2px))}
+#api-receipt-preview .paper:not(.accordion){box-shadow:inset 1px 0 3px #0000000a,inset -1px 0 3px #0000000a,inset 0 -2px 4px #00000012}
+#api-receipt-preview .paper.red{--paper:#df391e;--ink:#281c10;--muted-ink:#4a2717;--paper-line:#9e301c}
+#api-receipt-preview .paper.cyan{--paper:#a6e4df;--ink:#173d39;--muted-ink:#38645e;--paper-line:#69aaa2}
+#api-receipt-preview .paper.cyan .alert-title{font-size:24px}
+#api-receipt-preview .store-brand{display:flex;align-items:center;justify-content:center;gap:11px;width:210px;height:62px;max-width:100%;margin:2px auto 18px;background:var(--ink);color:var(--paper);padding:13px 16px}
+#api-receipt-preview .store-brand span{display:flex;align-items:center;flex:none}
+#api-receipt-preview .store-brand{position:relative;clip-path:polygon(.4% 1%,12% .6%,12.2% 1.4%,31% .3%,48% .9%,63% .1%,78% .7%,99.6% .4%,100% 28%,99.6% 28.8%,99.9% 65%,99.5% 99.3%,81% 99.7%,80.6% 99%,57% 99.8%,35% 99.2%,34.7% 100%,.2% 99.4%,.5% 71%,0 70.5%,.3% 38%)}
+#api-receipt-preview .store-brand::after,#api-receipt-preview .store-brand span::after{content:'';position:absolute;inset:0;pointer-events:none;mask-image:url('assets/ink-grain.svg');mask-size:210px 62px;background:var(--paper);opacity:.24}
+#api-receipt-preview .store-brand span{position:relative}
+#api-receipt-preview .store-brand span::after{background:var(--ink);opacity:.3;mask-position:-26px -15px}
+#api-receipt-preview .store-symbol svg{display:block;width:32px;height:32px}
+#api-receipt-preview .store-wordmark svg{display:block;width:124px;height:33px}
+#api-receipt-preview .status{left:14px;font-size:10px}
+#api-receipt-preview .readback{inset:85px 10px 64px}
+#api-receipt-preview .machine-label{font-size:10px;letter-spacing:0}
+.cursor-interaction{cursor:pointer}
+#api-receipt-preview .tear-bundle{position:relative;width:100%;transform-origin:100% 100%;will-change:transform;pointer-events:none}
+#api-receipt-preview .paper.creased .fold-panel .paper{color:color-mix(in srgb,var(--ink) 91%,var(--paper))}
+#api-receipt-preview .paper.creased .fold-panel .paper .detail,#api-receipt-preview .paper.creased .fold-panel .paper .foot{color:color-mix(in srgb,var(--muted-ink) 94%,var(--paper))}
+#api-receipt-preview .paper.creased .crease-line{height:2px;background:linear-gradient(to bottom,color-mix(in srgb,var(--ink) 22%,var(--paper)),color-mix(in srgb,var(--paper) 92%,var(--ink)));opacity:.8}
+#api-receipt-preview .paper.creased .fold-panel::before{content:'';position:absolute;z-index:2;left:0;right:0;bottom:0;height:3px;background:var(--paper);opacity:.25;pointer-events:none}
+#api-receipt-preview .paper.accordion{isolation:isolate}
+#api-receipt-preview .paper.accordion .fold-panel{opacity:var(--fold-face,1)}
+#api-receipt-preview .fold-slice>.paper{clip-path:none!important;box-shadow:none!important}
+#api-receipt-preview .fold-back{position:absolute;inset:0;width:100%;height:100%;opacity:var(--fold-back,0);overflow:visible;pointer-events:none}
+#api-receipt-preview .back-upper{fill:var(--paper)}
+#api-receipt-preview .back-middle{fill:color-mix(in srgb,var(--paper) 96%,#706550)}
+#api-receipt-preview .back-lower{fill:color-mix(in srgb,var(--paper) 92%,#706550)}
+#api-receipt-preview .back-seam{fill:none;stroke:color-mix(in srgb,var(--paper) 82%,#706550);stroke-width:.5}
+#api-receipt-preview .reading-face{position:absolute;inset:0;display:var(--reading-display,none)}
+#api-receipt-preview .reading-face>.paper{clip-path:none;box-shadow:none}
+#api-receipt-preview .curl-flat{position:absolute;left:0;right:0;top:0;overflow:hidden;background:var(--paper)}
+#api-receipt-preview .curl-flat>.paper{clip-path:none;box-shadow:none}
+#api-receipt-preview .paper.creased .curl-band::before{display:none}
+#api-receipt-preview .paper.creased .curl-band .paper{color:var(--ink)}
+#api-receipt-preview .curl-band::after{opacity:1;background:linear-gradient(to bottom,rgb(32 27 16 / var(--curl-shade-start,0)),rgb(32 27 16 / var(--curl-shade-end,0)))}
+#api-receipt-preview .marker-censor{color:transparent!important;text-shadow:none!important;box-decoration-break:clone;-webkit-box-decoration-break:clone;background-image:var(--marker-stroke);background-size:100% 100%;background-repeat:no-repeat}
+#api-receipt-preview .marker-censor::selection{color:transparent;background:#252522}
+</style><script>
+(async () => {
+ await Promise.all([document.fonts.load('13px "DotGothic16"'),document.fonts.load('42px "VT323"')]);
+ await document.fonts.ready;
+ const root=document.getElementById('api-receipt-preview');
+ let resetAt=0;
+ const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const money=n=>`${n<0?'-':''}$${(Math.abs(n)/10000).toFixed(4)}`;
+ const tokens=n=>n.toLocaleString('en-US');
+ function timestamp(ms){
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)).map(v=>[v.type,v.value]));
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}`;
+ }
+ function durationAtPrint(ms){const mins=Math.max(0,Math.ceil((resetAt-ms)/60000));return `${Math.floor(mins/1440)}天 ${Math.floor(mins%1440/60)}小时 ${mins%60}分`;}
+ function resetCountdown(target){const seconds=Math.max(0,Math.ceil((target-Date.now())/1000));if(!seconds)return '等待额度刷新';const days=Math.floor(seconds/86400),hours=Math.floor(seconds%86400/3600),minutes=Math.floor(seconds%3600/60),rest=seconds%60;return `${days}d ${[hours,minutes,rest].map(n=>String(n).padStart(2,'0')).join(':')}`;}
+ function timeRows(printedAt,includeReset){return `<div class="times"><div class="pair"><span>打印时间</span><time>${timestamp(printedAt)}</time></div>${includeReset?`<div class="pair"><span>重置时间</span><time>${timestamp(resetAt)}</time></div>`:''}</div>`;}
+ function quotaBar(percent){const p=Math.max(0,Math.min(100,percent));return `<div class="quota-row"><span class="quota-bracket" aria-hidden="true">[</span><div class="quota-bar" role="progressbar" aria-label="剩余额度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}">${Array.from({length:20},(_,i)=>`<span class="quota-cell" aria-hidden="true"><span class="quota-fill" style="width:${Math.min(100,Math.max(0,(p-i*5)*20))}%"></span></span>`).join('')}</div><span class="quota-bracket" aria-hidden="true">]</span></div>`;}
+ function level(kind,value){return value<=0?'red':value<=(kind?10:50000)?'yellow':'normal';}
+ function shouldWarn(kind,before,after){const prior=level(kind,before),next=level(kind,after);return next!=='normal'&&(next!==prior||(!kind&&before===0&&after<0));}
+
+ function brandStamp(){return `<div class="store-brand" role="img" aria-label="Codex"><span class="store-symbol" aria-hidden="true"><svg fill="currentColor" fill-rule="evenodd" height="1em" style="flex:none;line-height:1" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg"><title>Codex</title><path clip-rule="evenodd" d="M8.086.457a6.105 6.105 0 013.046-.415c1.333.153 2.521.72 3.564 1.7a.117.117 0 00.107.029c1.408-.346 2.762-.224 4.061.366l.063.03.154.076c1.357.703 2.33 1.77 2.918 3.198.278.679.418 1.388.421 2.126a5.655 5.655 0 01-.18 1.631.167.167 0 00.04.155 5.982 5.982 0 011.578 2.891c.385 1.901-.01 3.615-1.183 5.14l-.182.22a6.063 6.063 0 01-2.934 1.851.162.162 0 00-.108.102c-.255.736-.511 1.364-.987 1.992-1.199 1.582-2.962 2.462-4.948 2.451-1.583-.008-2.986-.587-4.21-1.736a.145.145 0 00-.14-.032c-.518.167-1.04.191-1.604.185a5.924 5.924 0 01-2.595-.622 6.058 6.058 0 01-2.146-1.781c-.203-.269-.404-.522-.551-.821a7.74 7.74 0 01-.495-1.283 6.11 6.11 0 01-.017-3.064.166.166 0 00.008-.074.115.115 0 00-.037-.064 5.958 5.958 0 01-1.38-2.202 5.196 5.196 0 01-.333-1.589 6.915 6.915 0 01.188-2.132c.45-1.484 1.309-2.648 2.577-3.493.282-.188.55-.334.802-.438.286-.12.573-.22.861-.304a.129.129 0 00.087-.087A6.016 6.016 0 015.635 2.31C6.315 1.464 7.132.846 8.086.457zm-.804 7.85a.848.848 0 00-1.473.842l1.694 2.965-1.688 2.848a.849.849 0 001.46.864l1.94-3.272a.849.849 0 00.007-.854l-1.94-3.393zm5.446 6.24a.849.849 0 000 1.695h4.848a.849.849 0 000-1.696h-4.848z"></path></svg></span><span class="store-wordmark" aria-hidden="true"><svg fill="currentColor" fill-rule="evenodd" height="1em" style="flex:none;line-height:1" viewBox="0 0 91 24" xmlns="http://www.w3.org/2000/svg"><title>Codex</title><path d="M79.915 14.964l-5.53-7.548h3.33l3.88 5.256 3.88-5.256h3.24l-5.5 7.486 5.683 7.792h-3.361l-4.003-5.5-4.064 5.5H74.2l5.715-7.73zM66.368 23c-1.345 0-2.567-.326-3.667-.978-1.08-.652-1.935-1.579-2.567-2.78-.631-1.203-.947-2.608-.947-4.217 0-1.59.316-2.974.947-4.156.652-1.202 1.518-2.129 2.597-2.78 1.08-.652 2.272-.978 3.575-.978 1.813 0 3.33.55 4.553 1.65 1.222 1.1 1.956 2.597 2.2 4.491.082.693.112 1.477.092 2.353H62.09c.06 1.548.489 2.76 1.283 3.636.815.876 1.793 1.314 2.933 1.314h.184c.855 0 1.599-.224 2.23-.672.632-.448 1.06-1.06 1.284-1.833h2.933a6.147 6.147 0 01-2.322 3.575C69.433 22.54 68.018 23 66.368 23zm3.819-9.687c-.082-1.16-.469-2.077-1.161-2.75-.693-.692-1.558-1.038-2.597-1.038h-.214c-.978 0-1.844.315-2.597.947-.734.611-1.212 1.558-1.437 2.841h8.006zM47.834 23c-1.324 0-2.516-.326-3.575-.978-1.039-.652-1.854-1.579-2.444-2.78-.591-1.202-.887-2.598-.887-4.187 0-1.588.306-2.984.917-4.186.611-1.201 1.446-2.128 2.506-2.78 1.08-.652 2.281-.978 3.605-.978 1.08 0 2.047.224 2.903.672.855.449 1.497 1.019 1.925 1.711V1.306h2.903v21.388h-2.903v-2.108c-.408.672-1.06 1.242-1.956 1.711-.896.469-1.894.703-2.994.703zm.58-2.475c.856 0 1.62-.234 2.292-.703.672-.468 1.192-1.11 1.558-1.925.387-.835.58-1.782.58-2.841 0-1.06-.193-1.997-.58-2.812-.366-.835-.886-1.487-1.558-1.955a3.911 3.911 0 00-2.292-.703h-.183c-1.304 0-2.363.51-3.178 1.528-.794 1.018-1.191 2.332-1.191 3.941 0 1.61.397 2.924 1.191 3.942.815 1.019 1.874 1.528 3.178 1.528h.183zM31.022 23c-1.406 0-2.679-.337-3.82-1.009a7.367 7.367 0 01-2.688-2.841c-.652-1.223-.978-2.587-.978-4.095 0-1.507.326-2.862.978-4.064.651-1.222 1.548-2.17 2.688-2.841 1.141-.693 2.414-1.04 3.82-1.04 1.405 0 2.668.347 3.789 1.04 1.14.672 2.037 1.62 2.688 2.841.652 1.202.978 2.557.978 4.064 0 1.508-.326 2.872-.977 4.095a7.367 7.367 0 01-2.69 2.841C33.69 22.663 32.428 23 31.023 23zm.06-2.476c.857 0 1.62-.224 2.293-.672.672-.468 1.201-1.11 1.589-1.925.386-.835.58-1.792.58-2.872 0-1.08-.194-2.027-.58-2.841-.388-.836-.917-1.477-1.59-1.925a3.911 3.911 0 00-2.291-.703H30.9c-1.304 0-2.373.51-3.209 1.528-.814.998-1.222 2.312-1.222 3.941 0 1.63.407 2.954 1.222 3.972.835.998 1.905 1.497 3.209 1.497h.183zM12.053 23c-2.037 0-3.82-.469-5.348-1.406-1.507-.957-2.668-2.271-3.483-3.941S2 14.098 2 12c0-2.098.407-3.982 1.222-5.653.835-1.67 2.017-2.974 3.545-3.91C8.294 1.478 10.057 1 12.053 1c1.609 0 3.055.316 4.338.947 1.304.611 2.363 1.477 3.178 2.597.815 1.1 1.304 2.374 1.467 3.82h-3.117c-.244-1.365-.876-2.465-1.894-3.3-1.019-.856-2.302-1.283-3.85-1.283h-.245c-1.385 0-2.597.356-3.636 1.069-1.039.713-1.833 1.69-2.383 2.933-.55 1.243-.825 2.648-.825 4.217 0 1.568.275 2.974.825 4.216.55 1.243 1.344 2.22 2.383 2.934 1.04.713 2.251 1.07 3.636 1.07h.245c1.548 0 2.831-.418 3.85-1.254 1.039-.855 1.68-1.976 1.925-3.36h3.086c-.184 1.446-.683 2.729-1.497 3.85-.795 1.12-1.844 1.996-3.148 2.627-1.303.611-2.75.917-4.338.917z"></path></svg></span></div>`;}
+ function quotaMarkup(w){return `<div class="pair"><span>${w.label}剩余</span><span class="metric">${w.remaining}%</span></div>${quotaBar(w.remaining)}`;}
+ function fixedDuration(target,printedAt){const m=Math.max(0,Math.ceil((target-printedAt)/60000));return `${Math.floor(m/1440)}天 ${Math.floor(m%1440/60)}小时 ${m%60}分`;}
+ function regularMarkup(kind,r){
+  const head=`${brandStamp()}<div class="brand">账单</div><div class="subtitle">PLAN USAGE</div><div class="pair"><span>ChatGPT 订阅</span><span>#${r.id}</span></div><div class="rule"></div>`;
+  const use=`<div class="pair"><span class="muted">本次费用</span><span>使用订阅额度</span></div><div class="hero-label">${r.snapshot?'最近一次 Token 用量':r.partial?'本次 Token 用量 · 启动后':'本次 Token 用量'}</div><div class="hero-number">${r.hasUsage===false?'—':tokens(r.input+r.output)}<small>TOKENS</small></div><div class="pair detail"><span>输入 ${r.hasUsage===false?'—':tokens(r.input)}</span><span>输出 ${r.hasUsage===false?'—':tokens(r.output)}</span></div><div class="detail">缓存 ${r.hasUsage===false?'—':tokens(r.cached)} · 已含在输入中</div>`;
+  const quotas=(r.windows||[]).map(quotaMarkup).join('<div class="rule"></div>')||'<div class="detail">等待账户额度数据</div>';
+  const w=r.windows?.[0],extra=(r.windows||[]).slice(1).map(v=>`<div class="pair"><span>${v.label}重置</span><time>${v.resetAt?timestamp(v.resetAt):'未知'}</time></div>`).join('');
+  const stale=r.quotaAt&&r.printedAt-r.quotaAt>120000?`<div class="detail">额度采样 ${timestamp(r.quotaAt)}</div>`:'';
+  return `${head}${use}<div class="rule"></div>${quotas}<div class="rule"></div><div class="pair"><span>打印时距重置</span><span>${w?.resetAt?fixedDuration(w.resetAt,r.printedAt):'未知'}</span></div><div class="times"><div class="pair"><span>打印时间</span><time>${timestamp(r.printedAt)}</time></div><div class="pair"><span>重置时间</span><time>${w?.resetAt?timestamp(w.resetAt):'未知'}</time></div>${extra}</div>${stale}<div class="foot">北京时间 · 本票为打印时快照</div>`;
+ }
+ function warningMarkup(kind,r){const w=r.warning,red=w.remaining<=0;return `${brandStamp()}<div class="alert-title">警告</div><div class="alert-label">${w.label}剩余</div><div class="alert-value">${w.remaining}%</div>${quotaBar(w.remaining)}${red?`<div class="rule"></div><div class="times"><div class="pair"><span>重置时间</span><time>${w.resetAt?timestamp(w.resetAt):'未知'}</time></div>${w.resetAt?`<div class="pair"><span>打印时距重置</span><span>${fixedDuration(w.resetAt,r.printedAt)}</span></div>`:''}</div>`:''}`;}
+ function resetMarkup(r){const w=r.reset.window;return `${brandStamp()}<div class="alert-title">额度已重置</div><div class="alert-label">${w.label}剩余</div><div class="alert-value">${w.remaining}%</div>${quotaBar(w.remaining)}<div class="rule"></div><div class="times"><div class="pair"><span>重置时间</span><time>${timestamp(r.reset.resetAt)}</time></div><div class="pair"><span>下次重置</span><time>${timestamp(w.resetAt)}</time></div></div>`;}
+ function makeSpecialReceipt(tone,current,printedAt,id){
+  const base={id,demo:true,printedAt,warnings:[]};
+  if(tone==='cyan')return {...base,resetOnly:true,reset:{resetAt:printedAt,window:{...current,remaining:100,resetAt:printedAt+(current.minutes||10080)*60000}}};
+  if(tone==='yellow'||tone==='red')return {...base,warningOnly:true,warning:{...current,remaining:tone==='yellow'?10:0}};
+  return null;
+ }
+ function makeShowcaseRecords(current,printedAt){
+  const quotas=[72,48,24,9.8,0],inputs=[12240,28400,18600,36200,9400],outputs=[860,1750,1220,2140,680];
+  const records=quotas.map((remaining,i)=>{
+   const window={...current,remaining};
+   return {id:String(i+1).padStart(6,'0'),demo:true,showcase:true,snapshot:false,hasUsage:true,partial:false,
+    input:inputs[i],cached:Math.floor(inputs[i]*.6/100)*100,output:outputs[i],printedAt,windows:[window],quotaAt:printedAt,warnings:i>=3?[window]:[]};
+  });
+  records.push({...makeSpecialReceipt('cyan',current,printedAt,'000006'),showcase:true});
+  return records;
+ }
+ let audioContext;
+ function soundAt(time,duration,volume,frequency){
+  const buffer=audioContext.createBuffer(1,Math.ceil(audioContext.sampleRate*duration),audioContext.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.exp(-i/data.length*5);
+  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();
+  source.buffer=buffer;filter.type='bandpass';filter.frequency.value=frequency;gain.gain.value=volume;source.connect(filter);filter.connect(gain);gain.connect(audioContext.destination);source.start(time);
+ }
+ [...root.querySelectorAll('section')].forEach((section,kind)=>{if(!kind){section.remove();return;}section.hidden=false;
+  const preview={id:'LIVE',snapshot:true,hasUsage:false,windows:[],printedAt:Date.now()};
+  const extraScenario=kind?'':'<option value="debt">产生负债</option>';
+  section.innerHTML=`<div class="scene"><div class="controls"><button class="hide" type="button">收起</button><button class="quit" type="button">退出</button><button class="single cursor-interaction" type="button">打印一张</button><button class="batch cursor-interaction" type="button">连打 5 张</button><button class="tear cursor-interaction" type="button" disabled>撕下纸带</button><label>情景<select class="scenario"><option value="normal">正常消费</option><option value="low">到达警戒线</option><option value="zero">用尽</option>${extraScenario}</select></label><label class="cursor-interaction"><input class="sound" type="checkbox">打印音效</label><button class="history cursor-interaction" type="button" disabled>查看已出票</button></div><div class="example">模拟数据 · ${kind?'额度警戒线 20%':'余额警戒线 $5'} · <span class="count">样票预览</span></div><div class="assembly" aria-label="${kind?'Codex 连续纸带':'API 连续纸带'}"><div class="window"><div class="strip"><article class="paper sample">${regularMarkup(kind,preview)}</article></div></div><div class="machine"><div class="slot"></div><div class="machine-label"><span>CONTINUOUS RECEIPTS</span><span class="lamp"></span></div></div></div><div class="status" aria-live="polite">未撕下时连续出纸 · 第 4 张进纸即折叠旧票</div><div class="readback" hidden><div class="readback-nav"><button class="prev cursor-interaction" type="button">上一张</button><span class="page-number"></span><button class="next cursor-interaction" type="button">下一张</button><button class="close cursor-interaction" type="button">关闭</button></div><div class="readback-content"></div></div></div>`;
+  const q=s=>section.querySelector(s),single=q('.single'),batch=q('.batch'),tear=q('.tear'),scenario=q('.scenario'),sound=q('.sound'),historyButton=q('.history'),strip=q('.strip'),counter=q('.count'),status=q('.status'),assembly=q('.assembly'),viewer=q('.readback');
+  const queue=[],run=[],history=[];let busy=false,serial=127,value=kind?68.8:200000,viewIndex=0,activeItem=null;
+  const settings={duration:4.2,bounce:10};
+  if(globalThis.Tweak){const tweak=new Tweak({container:assembly,onChange:()=>{}});tweak.addSlider(settings,'duration',{label:'每张打印时长',min:2,max:7,step:.1,unit:'秒'});tweak.addSlider(settings,'bounce',{label:'竖直出纸幅度',min:4,max:16,unit:'px'});}
+  function update(){const count=run.length+(activeItem?1:0);counter.textContent=`连纸 ${count} 张${activeItem?' · 含正在打印':''}${count>3?(activeItem?' · 送纸推动折叠':' · 已形成折痕'):''}${queue.length?` · 等待 ${queue.length} 笔`:''}`;tear.disabled=busy||run.length===0;historyButton.disabled=history.length===0;}
+  function foldIdentity(item){
+   if(item.foldIdentity)return item.foldIdentity;
+   let hash=2166136261;for(const ch of item.id)hash=Math.imul(hash^ch.charCodeAt(0),16777619);
+   hash=(hash^(hash>>>16))>>>0;
+   return item.foldIdentity={height:8+(hash%61)/10,x:((hash>>>7)%43-21)/10,curve:((hash>>>13)%11-5)/10};
+  }
+  function compactSize(item){return foldIdentity(item).height;}
+  function buildAccordion(item){
+   if(item.panels)return;
+   item.flatHeight=item.node.getBoundingClientRect().height;item.projectedHeight=item.flatHeight;
+   const id=foldIdentity(item),bow=id.curve*2;
+   item.node.style.height=`${item.flatHeight}px`;item.node.classList.add('accordion','creased');
+   item.node.setAttribute('aria-label',`折叠小票 ${item.id}，悬停展开`);
+   item.node.innerHTML=`<div class="curl-flat"><div class="paper ${item.tone}">${item.html}</div></div>`+Array.from({length:10},()=>`<div class="fold-panel curl-band"><div class="fold-slice" style="height:${item.flatHeight}px"><div class="paper ${item.tone}">${item.html}</div></div></div>`).join('')+
+    `<svg class="fold-back" viewBox="0 0 290 24" preserveAspectRatio="none" aria-hidden="true">
+     <path class="back-lower" d="M3 5 Q75 ${2+bow} 147 5 T287 4 Q292 13 287 22 Q215 ${24-bow} 145 21 T3 22 Q-1 14 3 5Z"/>
+     <path class="back-upper" d="M3 4 Q75 ${1+bow} 147 4 T287 3 Q290 8 287 16 Q216 ${19-bow} 145 16 T3 17 Q0 10 3 4Z"/>
+     <path class="back-seam" d="M4 18 Q74 ${15+bow} 145 17 T286 16"/>
+    </svg><div class="reading-face"><div class="paper ${item.tone}">${item.html}</div></div>`;
+   item.panels=[...item.node.querySelectorAll('.fold-panel')];item.flat=item.node.querySelector('.curl-flat');item.slices=[...item.node.querySelectorAll('.fold-slice')];item.back=item.node.querySelector('.fold-back');
+   commitFold(item,item.flatHeight);
+  }
+  function foldPose(item,projected){
+   const ratio=Math.min(1,Math.max(0,projected/item.flatHeight));
+   // Opaque faces until the fold is almost closed; never blend text with a stretched paper back.
+   const face=projected>Math.max(24,compactSize(item)*2.2)?1:0;
+   return {ratio,angle:Math.acos(ratio)*180/Math.PI,step:projected/4,face};
+  }
+  function commitFold(item,height){
+   const pose=foldPose(item,height),id=foldIdentity(item);item.projectedHeight=height;item.node.style.height=`${height}px`;
+   item.node.style.transform=`translateX(${id.x*(1-pose.ratio)}px)`;
+   item.node.style.setProperty('--fold-face',String(pose.ratio>.999?0:pose.face));
+   item.node.style.setProperty('--reading-display',pose.ratio>.999?'block':'none');
+   item.node.style.setProperty('--fold-back',String(1-pose.face));
+   item.node.dataset.compact=String(pose.ratio<.92);
+   if(!item.previewCaptured&&pose.ratio>.45&&pose.ratio<.65){item.previewCaptured=true;window.chrome.webview.postMessage({type:'curlPreview'});}
+   const bend=Math.max(0,item.flatHeight-height),angle=Math.min(1.48,bend/80*1.48);
+   const curl=Math.min(58,height*.45,bend*.55),flat=Math.max(0,height-curl),radius=angle>.001?curl/Math.sin(angle):0;
+   item.flat.style.height=`${flat}px`;item.flat.style.display=pose.ratio>.999||!pose.face?'none':'block';
+   item.panels.forEach((panel,i)=>{
+    const a=angle*i/item.panels.length,b=angle*(i+1)/item.panels.length,source=radius*(b-a),y=radius*Math.sin(a),projected=radius*(Math.sin(b)-Math.sin(a));
+    panel.style.top=`${flat+y}px`;panel.style.height=`${source+.06}px`;panel.style.transform=`scaleY(${source>.001?projected/source:1})`;
+    panel.style.setProperty('--curl-shade-start',String(.18*Math.pow(Math.sin(a),2)));
+    panel.style.setProperty('--curl-shade-end',String(.18*Math.pow(Math.sin(b),2)));
+    item.slices[i].style.top=`${-(flat+radius*a)}px`;
+   });
+  }
+  function preparePushFolds(distance){
+   const occupied=run.reduce((sum,item)=>sum+(item.projectedHeight??item.node.getBoundingClientRect().height),0);
+   const headroom=Math.max(0,innerHeight-2-occupied);
+   const needed=Math.max(0,distance-headroom);
+   if(needed<=0)return [];
+   const plans=[];let absorbed=0;
+   for(let i=run.length-1;i>=0&&absorbed<needed;i--){
+    const item=run[i],start=item.projectedHeight??item.node.getBoundingClientRect().height,capacity=Math.max(0,start-compactSize(item));
+    if(capacity<.01)continue;
+    buildAccordion(item);
+    const amount=Math.min(capacity,needed-absorbed);plans.push({item,start,end:start-amount,begin:headroom+absorbed,amount});absorbed+=amount;
+   }
+   return plans;
+  }
+  function startPushFolds(plans,motion,distance,duration){
+   return plans.map(plan=>{
+    // Compression cannot exceed the amount of new paper actually fed into the stack.
+    const frames=motion.stops.map(stop=>({offset:stop.offset,easing:'steps(1,end)',height:`${plan.start-Math.min(plan.amount,Math.max(0,distance*stop.progress-plan.begin))}px`}));
+    const animation=plan.item.node.animate(frames,{duration,easing:'linear',fill:'forwards'});
+    plan.item.feedAnimation=animation;
+    return animation;
+   });
+  }
+
+  function printFrames(height){
+   const phases=[{to:.17,move:.15,pause:.045},{to:.40,move:.20,pause:.055},{to:.65,move:.19,pause:.035},{to:.84,move:.15,pause:.045},{to:1,move:.13,pause:0}],frames=[],runs=[],stops=[{offset:0,progress:0}];
+   let time=0,progress=0;const pos=p=>`translateY(${((1-p)*height).toFixed(2)}px)`;
+   phases.forEach(p=>{const steps=Math.max(2,Math.round((p.to-progress)*height/2));frames.push({transform:pos(progress),offset:time,easing:`steps(${steps},end)`});runs.push({start:time,length:p.move});for(let j=1;j<=steps;j++)stops.push({offset:Math.min(1,time+p.move*j/steps),progress:progress+(p.to-progress)*j/steps});time+=p.move;frames.push({transform:pos(p.to),offset:Math.min(1,time),easing:'linear'});time+=p.pause;if(p.pause)stops.push({offset:Math.min(1,time),progress:p.to});progress=p.to;});
+   frames.at(-1).offset=1;stops.at(-1).offset=1;return {frames,runs,stops};
+  }
+  async function printDocument(record,type='usage'){
+   settleHover();const sample=strip.querySelector('.sample');if(sample)sample.remove();
+   const isWarning=type==='warning',isReset=type==='reset',label=isReset?'额度重置':isWarning?'警告':record.snapshot?'额度快照':'用量';
+   const tone=isReset?'cyan':isWarning?level(kind,record.warning.remaining):'normal';
+   const html=isReset?resetMarkup(record):isWarning?warningMarkup(kind,record):regularMarkup(kind,record);
+   const node=document.createElement('article');node.className=`paper ${tone}`;node.dataset.receipt=type;node.dataset.related=record.id;node.setAttribute('aria-label',`${label}小票 ${record.id}`);node.innerHTML=html;
+   strip.appendChild(node);
+   const height=node.getBoundingClientRect().height,motion=printFrames(height),duration=reduced()?80:settings.duration*1000;
+   strip.style.transform=`translateY(${height}px)`;
+   const item={node,html,tone,id:(isWarning?'W':'#')+record.id};activeItem=item;const foldPlans=preparePushFolds(height);update();
+   status.textContent=isWarning?`正在追加${tone==='yellow'?'黄色':'红色'}独立警告票 · W${record.id}`:`正在打印消费票 #${record.id}`;
+   let feed,pop,foldAnimations=[],finished=false;
+   try{
+    if(sound.checked){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!audioContext&&Audio)audioContext=new Audio();if(audioContext){await audioContext.resume();const now=audioContext.currentTime;for(const part of motion.runs)for(let t=.015;t<part.length*duration/1000-.025;t+=.065)soundAt(now+part.start*duration/1000+t,.025,.085,1150);}}catch(e){sound.checked=false;}}
+    feed=strip.animate(reduced()?[{transform:`translateY(${height}px)`},{transform:'translateY(0px)'}]:motion.frames,{duration,easing:'linear',fill:'forwards'});
+    foldAnimations=startPushFolds(foldPlans,motion,height,duration);
+    const startTime=document.timeline?.currentTime;if(typeof startTime==='number'){feed.startTime=startTime;foldAnimations.forEach(animation=>{animation.startTime=startTime;});}
+    await feed.finished;foldPlans.forEach(plan=>commitFold(plan.item,plan.end));foldAnimations.forEach(animation=>animation.cancel());strip.style.transform='translateY(0px)';feed.cancel();
+    if(!reduced()){
+     await pause(200);
+     pop=strip.animate([{transform:'translateY(0px)',offset:0,easing:'cubic-bezier(.16,.8,.3,1)'},{transform:`translateY(-${settings.bounce}px)`,offset:.42,easing:'cubic-bezier(.4,0,.35,1)'},{transform:'translateY(0px)',offset:1}],{duration:440,easing:'linear'});
+     await pop.finished;
+    }
+    run.push(item);activeItem=null;paperPrinted(item);history.push(item);finished=true;update();const face=node.querySelector('.fold-slice>.paper')||node;const style=getComputedStyle(face);window.chrome.webview.postMessage({type:'printed',id:record.id,receipt:type,demo:!!record.demo,showcase:!!record.showcase,tone,remaining:isReset?record.reset.window.remaining:isWarning?record.warning.remaining:record.windows?.[0]?.remaining,soundEnabled:sound.checked,audioState:audioContext?.state||'idle',typography:{font:style.fontFamily,fontSize:style.fontSize,padding:style.padding,width:face.getBoundingClientRect().width,dotGothic16:document.fonts.check('13px DotGothic16'),vt323:document.fonts.check('42px VT323'),heroFont:face.querySelector('.hero-number')?getComputedStyle(face.querySelector('.hero-number')).font:null}});
+    status.textContent=`${label}票已打印 · ${run.length>3?'纸带已折叠':'仍与前票相连'}`;
+   }catch(error){node.remove();activeItem=null;foldPlans.forEach(plan=>commitFold(plan.item,plan.start));update();throw error;}
+   finally{strip.style.transform='translateY(0px)';foldAnimations.forEach(animation=>animation.cancel());if(!finished)foldPlans.forEach(plan=>commitFold(plan.item,plan.start));if(feed)feed.cancel();if(pop)pop.cancel();}
+  }
+  async function drain(){
+   if(busy)return;busy=true;update();
+   try{
+    while(queue.length){const record=queue.shift();update();await printDocument(record,record.resetOnly?'reset':record.warningOnly?'warning':'usage');for(const warning of record.warnings||[]){record.warning=warning;if(!reduced())await pause(500);await printDocument(record,'warning');}if(queue.length&&!reduced())await pause(500);}
+   }catch(error){queue.length=0;status.textContent='打印中断，请重试';}
+   finally{busy=false;update();}
+  }
+
+  q('.single').remove();q('.batch').remove();scenario.closest('label').remove();
+  q('.example').replaceChildren(counter);status.textContent='正在连接 Codex…';strip.replaceChildren();
+  q('.hide').onclick=()=>window.chrome.webview.postMessage({type:'hide'});
+  q('.quit').onclick=()=>window.chrome.webview.postMessage({type:'quit'});
+  let lastRecord=null,demoSerial=0;
+  sound.checked=localStorage.getItem('receipt.sound')!=='false';
+  function setPrintSound(enabled){sound.checked=!!enabled;localStorage.setItem('receipt.sound',String(sound.checked));window.chrome.webview.postMessage({type:'soundState',enabled:sound.checked});}
+  function printSpecial(tone){
+   const current=lastRecord?.windows?.[0]||{label:'额度',resetAt:0,minutes:10080};
+   const record=makeSpecialReceipt(tone,current,Date.now(),({yellow:'Y',red:'R',cyan:'C'}[tone]||'S')+String(++demoSerial).padStart(3,'0'));
+   if(record){queue.push(record);void drain();}
+  }
+  window.chrome.webview.addEventListener('message',e=>{
+   if(e.data.type==='showcase'){
+    setPrintSound(true);
+    const printedAt=Date.now(),current=e.data.window||{label:'周额度',minutes:10080,resetAt:printedAt+7*86400000};
+    const records=makeShowcaseRecords(current,printedAt);lastRecord=records[0];queue.push(...records);void drain();
+   }
+   if(e.data.type==='receipt'){if(!e.data.record.resetOnly&&!e.data.record.warningOnly)lastRecord=e.data.record;queue.push(e.data.record);void drain();}
+   if(e.data.type==='demoBatch'&&lastRecord){
+    const count=Math.max(1,Math.min(10,Number(e.data.count)||10));
+    for(let i=0;i<count;i++)queue.push({...lastRecord,id:'D'+String(++demoSerial).padStart(3,'0'),demo:true,warnings:[],printedAt:Date.now()});
+    void drain();
+   }
+   if(e.data.type==='printSpecial')printSpecial(e.data.tone);
+   if(e.data.type==='demoWarnings'){printSpecial('yellow');printSpecial('red');}
+   if(e.data.type==='status'){q('.machine-label span').textContent=e.data.text;}
+  });
+  window.chrome.webview.postMessage({type:'ready'});
+  window.chrome.webview.postMessage({type:'soundState',enabled:sound.checked});
+  tear.addEventListener('click',async()=>{
+   if(busy||!run.length)return;busy=true;update();
+   try{if(!reduced()){const removal=strip.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-70px)',opacity:0}],{duration:320,easing:'ease-in'});await removal.finished;removal.cancel();}strip.replaceChildren();run.length=0;status.textContent='纸带已撕下 · 下一张重新开始连纸';}
+   finally{busy=false;update();if(queue.length)void drain();}
+  });
+  function showHistory(){if(!history.length)return;viewIndex=Math.max(0,Math.min(history.length-1,viewIndex));const item=history[viewIndex];q('.readback-content').innerHTML=`<article class="paper ${item.tone}">${item.html}</article>`;q('.page-number').textContent=`${viewIndex+1} / ${history.length}`;q('.prev').disabled=viewIndex===0;q('.next').disabled=viewIndex===history.length-1;viewer.hidden=false;}
+  historyButton.addEventListener('click',()=>{viewIndex=history.length-1;showHistory();});q('.prev').addEventListener('click',()=>{viewIndex--;showHistory();});q('.next').addEventListener('click',()=>{viewIndex++;showHistory();});q('.close').addEventListener('click',()=>{viewer.hidden=true;});
+  // Native window clipping follows paper geometry; the rest of the desktop is untouched.
+  let pointer={x:-1,y:-1},hovered=null,menuOpen=false;
+  let tearGesture=null,tearing=false;
+  const foldTweens=new Map();
+  let hoverAnchor=null;
+  function paperRects(){
+   return [...run,...(activeItem?[activeItem]:[])].filter(item=>item.node.isConnected).map(item=>{
+    const r=item.node.getBoundingClientRect();
+    const folded=!!item.panels&&item.projectedHeight<item.flatHeight*.92;
+    return {item,x:Math.max(0,r.left),y:Math.max(0,r.top),width:Math.min(innerWidth,r.right)-Math.max(0,r.left),height:Math.min(innerHeight,r.bottom)-Math.max(0,r.top),folded,topEdge:!folded&&r.top>=0,bottomEdge:!folded&&r.bottom<=innerHeight};
+   }).filter(r=>r.width>0&&r.height>0);
+  }
+  function tweenFold(item,target,delay=0){
+   if(!item.node.isConnected)return;
+   buildAccordion(item);
+   const from=item.projectedHeight;
+   if(Math.abs(from-target)<.1)return;
+   foldTweens.set(item,{from,target,start:performance.now()+delay,duration:target>from?520:360});
+  }
+  function settleHover(){
+   for(const [item,tween] of foldTweens)commitFold(item,tween.target);
+   foldTweens.clear();hovered=null;hoverAnchor=null;
+  }
+  function foldEverything(){
+   hovered=null;hoverAnchor=null;
+   // Printing owns its own accordion animation until the feed completes.
+   if(!busy)[...run].reverse().forEach((item,i)=>tweenFold(item,compactSize(item),Math.min(i*55,550)));
+  }
+  function paperPrinted(item){
+   for(const older of run)if(older!==item)older.holdUntil=0;
+   item.holdUntil=performance.now()+5000;
+   // A restrained vertical settling ripple, never a sideways wobble.
+   run.slice(-4,-1).reverse().forEach((old,i)=>{if(old.panels)old.node.animate([{translate:'0 -1px'},{translate:'0 0px'}],{duration:260,delay:i*35,easing:'ease-out'});});
+  }
+  function feedLocked(item){return item.feedAnimation?.playState==='running';}
+  function collapse(item,force=false,targetOverride){
+   if(!item||feedLocked(item)||(!force&&performance.now()<(item.holdUntil??0)))return;
+   const target=targetOverride??compactSize(item),current=item.projectedHeight??item.node.getBoundingClientRect().height;
+   if(current<=target+.1)return;
+   if(foldTweens.get(item)?.target===target)return;
+   tweenFold(item,target);
+  }
+  function makeReadingRoom(selected){
+   const others=run.filter(item=>item!==selected),space=Math.max(1,innerHeight-4-(selected.flatHeight??selected.node.getBoundingClientRect().height));
+   const thickness=others.reduce((sum,item)=>sum+compactSize(item),0),scale=Math.min(1,space/Math.max(1,thickness));
+   for(const item of others)collapse(item,true,Math.max(.5,compactSize(item)*scale));
+  }
+  function atBoundary(item){
+   const r=item.node.getBoundingClientRect();
+   // The bottom is the intentional paper outlet; the top and sides are capacity limits.
+   return r.top<=2||r.left<-.5||r.right>innerWidth+.5||r.bottom>innerHeight+1;
+  }
+  function hitPaper(){return paperRects().find(r=>pointer.x>=r.x&&pointer.x<=r.x+r.width&&pointer.y>=r.y&&pointer.y<=r.y+r.height)?.item;}
+  function checkPointer(){
+   let hit=hitPaper();
+   if(hovered&&hoverAnchor&&pointer.x>=0&&pointer.y>=0&&Math.hypot(pointer.x-hoverAnchor.x,pointer.y-hoverAnchor.y)<5)hit=hovered;
+   if(menuOpen||tearGesture||tearing)return;
+   if(!busy&&hit&&hit!==activeItem&&hit!==hovered){
+    collapse(hovered);
+    hovered=hit;
+    hoverAnchor={...pointer};
+    makeReadingRoom(hit);
+    if(hit.panels)tweenFold(hit,hit.flatHeight);
+   }
+   if(!hit&&!menuOpen&&hovered){
+    collapse(hovered);
+    hovered=null;hoverAnchor=null;
+   }
+   for(const item of run){
+    if(!busy&&atBoundary(item)){
+     collapse(item,true);
+     // Do not repeatedly reopen a paper that cannot fit until the cursor moves again.
+    }else if(item!==hit)collapse(item);
+   }
+  }
+  strip.addEventListener('pointermove',e=>{pointer={x:e.clientX,y:e.clientY};checkPointer();});
+  strip.addEventListener('pointerleave',()=>{pointer={x:-1,y:-1};checkPointer();});
+  strip.addEventListener('contextmenu',e=>{
+   if(!e.target.closest('.paper'))return;
+   e.preventDefault();menuOpen=true;
+   window.chrome.webview.postMessage({type:'contextMenu',x:e.clientX,y:e.clientY,viewportWidth:innerWidth,viewportHeight:innerHeight,busy,sound:sound.checked,hasPapers:run.length>0});
+  });
+  window.chrome.webview.addEventListener('message',e=>{
+   if(e.data.type==='pointer'){pointer={x:e.data.x,y:e.data.y};checkPointer();}
+   if(e.data.type==='menuClosed'){menuOpen=false;checkPointer();}
+   if(e.data.type==='action'){
+    if(e.data.action==='sound')setPrintSound(e.data.enabled);
+    if(e.data.action==='tear')tear.click();
+    if(e.data.action==='fold')foldEverything();
+    if(e.data.action==='show'&&!busy&&run.length){const item=run.at(-1);item.holdUntil=performance.now()+5000;makeReadingRoom(item);buildAccordion(item);tweenFold(item,item.flatHeight);}
+   }
+  });
+  let lastRegion='',lastFrame=0;
+  function surfaceFrame(now){
+   for(const [item,t] of foldTweens){
+    const p=Math.min(1,Math.max(0,(now-t.start)/t.duration)),smooth=p*p*(3-2*p);
+    let height=p>=1?t.target:t.from+(t.target-t.from)*smooth;
+    if(item===hovered&&t.target>t.from){
+     const occupied=run.filter(other=>other!==item).reduce((sum,other)=>sum+(other.projectedHeight??other.node.getBoundingClientRect().height),0);
+     height=Math.min(height,Math.max(compactSize(item),innerHeight-4-occupied));
+    }
+    commitFold(item,height);
+    if(p>=1&&Math.abs(height-t.target)<.1)foldTweens.delete(item);
+   }
+   for(const item of run){if(item.feedAnimation&&['running','finished'].includes(item.feedAnimation.playState))commitFold(item,item.node.getBoundingClientRect().height);}
+   if(now-lastFrame>32){
+    lastFrame=now;checkPointer();
+    const rects=paperRects().map(({x,y,width,height,topEdge,bottomEdge,folded})=>({x:Math.floor(x),y:Math.floor(y),width:Math.ceil(width),height:Math.ceil(height),topEdge,bottomEdge,folded}));
+    const region=JSON.stringify(rects);
+    if(region!==lastRegion){lastRegion=region;window.chrome.webview.postMessage({type:'paperRegion',rects,viewportWidth:innerWidth,viewportHeight:innerHeight,pixelRatio:devicePixelRatio});}
+    const settledKey=run.map(item=>Math.round(item.projectedHeight??item.node.getBoundingClientRect().height)).join(',');
+    if(!busy&&!foldTweens.size&&run.length&&lastSettledCount!==settledKey){lastSettledCount=settledKey;window.chrome.webview.postMessage({type:'stackSettled',count:run.length,heights:run.map(item=>item.projectedHeight??item.node.getBoundingClientRect().height)});}
+   }
+   requestAnimationFrame(surfaceFrame);
+  }
+  let lastSettledCount=-1;
+  requestAnimationFrame(surfaceFrame);
+
+  const markerUndo=[];
+  let markerSerial=0;
+  function markerStroke(seed,width){
+   // Vector ink follows the inline fragment, so wrapped text keeps its original layout.
+   let state=seed>>>0;
+   const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};
+   const w=Math.max(30,Math.min(320,width)),h=32,slope=(random()-.5)*2.8;
+   const edge=(x,base)=>base+slope*(x/w-.5)+(random()-.5)*1.3;
+   const upper=[],lower=[];
+   for(let x=2;x<w-1;x+=2+random()*3){upper.push([x,edge(x,4)]);lower.unshift([x,edge(x,28)]);}
+   const points=p=>p.map(([x,y])=>`${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+   const body=`<polygon points="${points([[1.4,6],...upper,[w-1,5],[w-.8,25],...lower,[.7,26]])}" fill="#050504"/>`;
+   // Dry bristles live outside the dense central stroke; paper shows only at its edges.
+   let bristles='';
+   for(let i=0;i<15;i++){
+    const top=i%2===0,x=random()*w*.8,length=5+random()*w*.28;
+    const y=edge(x,top?2.6:29.2),dy=slope*length/w;
+    bristles+=`<path d="M${x.toFixed(2)} ${y.toFixed(2)}l${length.toFixed(2)} ${dy.toFixed(2)}" stroke="#080807" stroke-width="${(.25+random()*.7).toFixed(2)}"/>`;
+   }
+   const overpaint=`<path d="M1 16 Q${w*.35} 13 ${w-1} ${16+slope}" fill="none" stroke="#000" stroke-width="15" opacity=".8"/>`;
+   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${bristles}${body}${overpaint}</svg>`;
+   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+  function refreshMarkedPaper(item,html){
+   item.html=html;
+   if(item.panels)item.node.querySelectorAll('.fold-slice>.paper,.reading-face>.paper,.curl-flat>.paper').forEach(paper=>paper.innerHTML=html);
+   else item.node.innerHTML=html;
+  }
+  function censorSelection(){
+   const selection=window.getSelection();
+   if(!selection||selection.isCollapsed||!selection.rangeCount)return false;
+   const range=selection.getRangeAt(0);
+   const element=n=>n.nodeType===Node.ELEMENT_NODE?n:n.parentElement;
+   const paper=element(range.startContainer)?.closest('.paper');
+   if(!paper||paper!==element(range.endContainer)?.closest('.paper'))return false;
+   const item=[...run,...(activeItem?[activeItem]:[])].find(item=>item.node===paper||item.node.contains(paper));
+   if(!item||item===activeItem)return false;
+   const selected=[];
+   const walker=document.createTreeWalker(paper,NodeFilter.SHOW_TEXT);
+   let text;
+   while((text=walker.nextNode())){
+    if(text.parentElement.closest('svg,.marker-censor')||!range.intersectsNode(text))continue;
+    const start=text===range.startContainer?range.startOffset:0,end=text===range.endContainer?range.endOffset:text.length;
+    if(end>start&&text.textContent.slice(start,end).trim())selected.push({text,start,end});
+   }
+   if(!selected.length)return false;
+   markerUndo.push({item,html:item.html});
+   if(markerUndo.length>30)markerUndo.shift();
+   selected.reverse().forEach(({text,start,end},i)=>{
+    if(end<text.length)text.splitText(end);
+    const inked=start?text.splitText(start):text;
+    const stroke=document.createElement('span');stroke.className='marker-censor';
+    const inkRange=document.createRange();inkRange.selectNodeContents(inked);
+    const width=Math.max(...[...inkRange.getClientRects()].map(rect=>rect.width),30);
+    stroke.style.setProperty('--marker-stroke',markerStroke(++markerSerial*7919+i,width));
+    inked.replaceWith(stroke);stroke.appendChild(inked);
+   });
+   const html=paper.innerHTML;selection.removeAllRanges();refreshMarkedPaper(item,html);
+   window.chrome.webview.postMessage({type:'markerChanged',id:item.id,count:selected.length});
+   return true;
+  }
+  document.addEventListener('keydown',event=>{
+   if(event.code==='Space'&&!event.ctrlKey&&!event.metaKey&&!event.altKey){
+    if(censorSelection())event.preventDefault();
+   }
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'&&markerUndo.length){
+    const undo=markerUndo.pop();if(undo.item.node.isConnected){event.preventDefault();refreshMarkedPaper(undo.item,undo.html);}
+   }
+  });
+  // Development check exercises the real rendered selection/keyboard path, then restores the receipt.
+  window.receiptMarkerSelfTest=()=>{
+   const item=run.find(item=>item.node.querySelector('.hero-number'));
+   if(!item)return {error:'No readable receipt'};
+   const before=item.html;
+   if(item.panels)commitFold(item,item.flatHeight);
+   const face=item.node.querySelector('.reading-face>.paper')||item.node;
+   const text=face.querySelector('.hero-number').firstChild;
+   const selection=window.getSelection(),range=document.createRange();range.setStart(text,0);range.setEnd(text,Math.min(3,text.length));
+   selection.removeAllRanges();selection.addRange(range);
+   document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',key:' ',bubbles:true,cancelable:true}));
+   const applied=item.html.includes('marker-censor');
+   buildAccordion(item);commitFold(item,compactSize(item));commitFold(item,item.flatHeight);
+   const survivesFold=!!item.node.querySelector('.reading-face .marker-censor');
+   document.dispatchEvent(new KeyboardEvent('keydown',{key:'z',ctrlKey:true,bubbles:true,cancelable:true}));
+   const restored=item.html===before;
+   return {applied,survivesFold,restored};
+  };
+  let markerPreview=null;
+  window.receiptMarkerPreview=(show=true)=>{
+   if(!show){if(markerPreview){refreshMarkedPaper(markerPreview.item,markerPreview.html);markerPreview.item.holdUntil=markerPreview.holdUntil;markerUndo.length=markerPreview.undoLength;markerPreview=null;}return;}
+   const item=run.find(item=>item.node.querySelector('.hero-number'));
+   if(!item)return;
+   markerPreview={item,html:item.html,holdUntil:item.holdUntil,undoLength:markerUndo.length};
+   item.holdUntil=performance.now()+3000;
+   if(item.panels)commitFold(item,item.flatHeight);
+   const face=item.node.querySelector('.reading-face>.paper')||item.node;
+   const range=document.createRange();range.setStartBefore(face.querySelector('.hero-label'));range.setEndAfter(face.querySelector('.detail:not(.pair)'));
+   const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);
+   document.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',key:' ',bubbles:true,cancelable:true}));
+  };
+
+  function isTearSwipe(start,point){
+   const elapsed=point.time-start.time,dx=start.x-point.x,dy=Math.abs(start.y-point.y);
+   return elapsed>0&&elapsed<=340&&dx>=96&&dx/elapsed>=.65&&dy<Math.max(28,dx*.3);
+  }
+  function clearTearGesture(){
+   const gesture=tearGesture;tearGesture=null;
+   if(gesture&&strip.hasPointerCapture?.(gesture.id))strip.releasePointerCapture(gesture.id);
+  }
+  strip.addEventListener('pointerdown',event=>{
+   if(event.button!==0||busy||tearing||menuOpen)return;
+   const item=run.find(item=>item.node===event.target||item.node.contains(event.target));
+   if(!item)return;
+   tearGesture={item,id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};
+   // Capture keeps the release observable even if a fast drag leaves the clipped desktop window.
+   strip.setPointerCapture(event.pointerId);
+  });
+  strip.addEventListener('pointermove',event=>{
+   const gesture=tearGesture;
+   if(!gesture||gesture.id!==event.pointerId)return;
+   if(!(event.buttons&1)){clearTearGesture();return;}
+   const point={x:event.clientX,y:event.clientY,time:performance.now()};
+   if(isTearSwipe(gesture,point)){
+    event.preventDefault();clearTearGesture();window.getSelection()?.removeAllRanges();
+    void tearThrough(gesture.item);
+   }
+  });
+  strip.addEventListener('pointerup',event=>{if(tearGesture?.id===event.pointerId){clearTearGesture();checkPointer();}});
+  strip.addEventListener('pointercancel',clearTearGesture);
+  strip.addEventListener('lostpointercapture',()=>{tearGesture=null;});
+
+  async function tearThrough(selected){
+   const end=run.indexOf(selected);
+   if(end<0||busy||tearing)return false;
+   const removed=run.slice(0,end+1),removedSet=new Set(removed);
+   busy=true;tearing=true;hovered=null;hoverAnchor=null;update();
+   for(const item of removed)foldTweens.delete(item);
+   const bundle=document.createElement('div');bundle.className='tear-bundle';
+   // Keep the same flow height throughout separation so newer receipts never jump.
+   strip.insertBefore(bundle,removed[0].node);
+   for(const item of removed)bundle.appendChild(item.node);
+   const tearHeight=bundle.getBoundingClientRect().height;
+   bundle.style.height=`${tearHeight}px`;
+   let animation;
+   try{
+    if(sound.checked&&audioContext){
+     const now=audioContext.currentTime;
+     for(let i=0;i<5;i++)soundAt(now+i*.026,.022,.045,620+i*170);
+    }
+    if(!reduced()){
+     const torn='polygon(0 0,100% 0,100% 100%,88% calc(100% - 1px),76% 100%,64% calc(100% - 3px),52% calc(100% - 2px),40% calc(100% - 5px),28% calc(100% - 4px),16% calc(100% - 8px),0 calc(100% - 10px))';
+     animation=bundle.animate([
+      {offset:0,transform:'translate(0,0)',clipPath:'polygon(0 0,100% 0,100% 100%,0 100%)',opacity:1},
+      {offset:.22,transform:'translate(-16px,-2px) skewY(-.7deg)',clipPath:torn,opacity:1},
+      {offset:.48,transform:'translate(-65px,-7px) skewY(-1.4deg)',clipPath:torn,opacity:1},
+      {offset:1,transform:'translate(-340px,-22px) skewY(-2deg)',clipPath:torn,opacity:0}
+     ],{duration:520,easing:'cubic-bezier(.35,0,.65,1)',fill:'forwards'});
+     await animation.finished;
+    }
+   }catch(error){
+    // An interrupted visual animation still completes the already requested tear.
+    if(error.name!=='AbortError')console.warn('Receipt tear animation interrupted',error);
+   }finally{
+    if(animation)animation.cancel();
+    for(const item of removed)item.node.remove();
+    bundle.remove();run.splice(0,end+1);
+    for(let i=history.length-1;i>=0;i--)if(removedSet.has(history[i]))history.splice(i,1);
+    for(let i=markerUndo.length-1;i>=0;i--)if(removedSet.has(markerUndo[i].item))markerUndo.splice(i,1);
+    busy=false;tearing=false;lastRegion='';lastSettledCount=-1;update();
+    window.chrome.webview.postMessage({type:'torn',count:removed.length,remaining:run.length});
+    if(queue.length)void drain();else checkPointer();
+   }
+   return true;
+  }
+
+ });
+})();
+</script>
+
+
+</html>
