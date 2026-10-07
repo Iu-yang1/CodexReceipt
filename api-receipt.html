@@ -1,0 +1,212 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&amp;family=VT323&amp;display=swap">
+<div id="api-receipt-preview"><div class="viz-carousel viz-dotted-background" aria-label="连续小票与警告票" data-previous-label="上一款" data-next-label="下一款"><section data-variant="API 消费" aria-label="API 消费纸带"></section><section data-variant="Codex 额度" aria-label="Codex 额度纸带" hidden></section></div></div>
+<style>
+#api-receipt-preview{font-family:'Segoe UI','Microsoft YaHei',sans-serif;color:light-dark(#252525,#e7e7e7);--paper:light-dark(#fffdf6,#292925);--ink:light-dark(#33342f,#e6e4d8);--muted-ink:light-dark(#727369,#aaa99d);--paper-line:light-dark(#bdbeb3,#67675b);--machine:light-dark(#e7e8e9,#333537)}
+#api-receipt-preview *{box-sizing:border-box}
+#api-receipt-preview .scene{height:790px;position:relative;padding:18px;overflow:hidden}
+#api-receipt-preview .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-right:64px;font-size:12px}
+#api-receipt-preview button,#api-receipt-preview select{font:inherit;color:inherit;background:light-dark(#fafafa,#303234);border:1px solid light-dark(#d5d6d7,#595b5d);border-radius:6px;padding:7px 10px}
+#api-receipt-preview button:disabled{opacity:.5}
+#api-receipt-preview .controls label{display:flex;align-items:center;gap:5px}
+#api-receipt-preview input{accent-color:light-dark(#404a45,#bccbc1)}
+#api-receipt-preview .example{margin-top:8px;font-size:11px;color:light-dark(#626563,#a9aeab)}
+#api-receipt-preview .assembly{position:absolute;right:22px;bottom:28px;width:min(314px,calc(100% - 44px))}
+#api-receipt-preview .window{height:604px;position:absolute;bottom:29px;left:0;right:0;overflow:hidden;isolation:isolate}
+#api-receipt-preview .strip{position:absolute;bottom:0;left:12px;width:calc(100% - 24px);transform:translateY(0)}
+#api-receipt-preview .paper{position:relative;width:100%;margin:0;padding:18px 18px 20px;background:var(--paper);color:var(--ink);font:13px/1.35 'DotGothic16','SimHei',monospace;font-synthesis:none;font-variant-numeric:tabular-nums;letter-spacing:.1px;border-top:1px dashed var(--paper-line)}
+#api-receipt-preview .paper:first-child{border-top:0}
+#api-receipt-preview .paper + .paper::before{content:'';position:absolute;top:-2px;left:0;right:0;height:4px;background:radial-gradient(circle at 2px 2px,var(--paper-line) 1px,transparent 1.2px) 0 0/8px 4px;pointer-events:none}
+#api-receipt-preview .paper.yellow{--paper:light-dark(#ffdf78,#735715);--ink:light-dark(#382706,#fff0b3);--muted-ink:light-dark(#594411,#f0d789);--paper-line:light-dark(#b59134,#b09245)}
+#api-receipt-preview .paper.red{--paper:light-dark(#ffc0b4,#812720);--ink:light-dark(#681710,#fff0e9);--muted-ink:light-dark(#802c20,#f4cbbf);--paper-line:light-dark(#c57765,#c07a68)}
+#api-receipt-preview .paper.accordion{padding:0;border:0;background:transparent;overflow:visible;transform-style:preserve-3d}
+#api-receipt-preview .paper.accordion::before{display:none}
+#api-receipt-preview .fold-panel{position:absolute;left:0;width:100%;overflow:hidden;transform-origin:50% 0;backface-visibility:visible;background:var(--paper)}
+#api-receipt-preview .fold-panel::after{content:'';position:absolute;inset:0;pointer-events:none;background:light-dark(#342b16,#000);opacity:var(--crease-shade,0)}
+#api-receipt-preview .fold-slice{position:absolute;left:0;width:100%;}
+#api-receipt-preview .fold-slice>.paper{border-top:0;min-height:100%;}
+#api-receipt-preview .crease-line{position:absolute;left:0;width:100%;height:1px;background:var(--paper-line);pointer-events:none;}
+#api-receipt-preview .brand{text-align:center;font-size:14px;letter-spacing:2px}
+#api-receipt-preview .subtitle{text-align:center;color:var(--muted-ink);font:13px 'VT323',monospace;letter-spacing:2px;margin:3px 0 12px}
+#api-receipt-preview .pair{display:flex;justify-content:space-between;gap:8px;margin:4px 0;align-items:baseline}
+#api-receipt-preview .pair>:last-child{text-align:right}
+#api-receipt-preview .muted,#api-receipt-preview .detail{color:var(--muted-ink)}
+#api-receipt-preview .detail{font-size:11px;margin:4px 0}
+#api-receipt-preview .rule{border-top:1px dashed var(--paper-line);margin:11px 0}
+#api-receipt-preview .hero-label{font-size:12px;color:var(--muted-ink);margin-top:3px}
+#api-receipt-preview .hero-number{font:42px/1.1 'VT323',monospace;margin:2px 0 7px}
+#api-receipt-preview .hero-number small{font:11px 'DotGothic16',monospace;margin-left:6px}
+#api-receipt-preview .metric{font:28px/1.2 'VT323',monospace;white-space:nowrap}
+#api-receipt-preview .foot{font-size:11px;text-align:center;color:var(--muted-ink);margin-top:11px}
+#api-receipt-preview .quota-row{display:flex;align-items:center;gap:5px;margin:8px 0 6px}
+#api-receipt-preview .quota-bracket{flex:none;font:24px/1 'VT323',monospace;color:var(--ink)}
+#api-receipt-preview .quota-bar{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;flex:1;min-width:0}
+#api-receipt-preview .quota-cell{aspect-ratio:1;display:block;background:color-mix(in srgb,var(--ink) 14%,var(--paper));overflow:hidden}
+#api-receipt-preview .quota-fill{display:block;height:100%;background:var(--ink)}
+#api-receipt-preview .times{font-size:11px;margin-top:8px}
+#api-receipt-preview .times time{font-family:Consolas,monospace;white-space:nowrap;font-variant-numeric:tabular-nums}
+#api-receipt-preview .alert-title{background:var(--ink);color:var(--paper);text-align:center;font-size:21px;font-weight:700;font-synthesis:weight;line-height:1.5;letter-spacing:2px;padding:8px 4px;margin:0 0 18px}
+#api-receipt-preview .alert-label{text-align:center;font-size:12px;letter-spacing:2px}
+#api-receipt-preview .alert-value{text-align:center;font:56px/1.1 'VT323',monospace;margin:3px 0 12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#api-receipt-preview .alert-value small{font:11px 'DotGothic16',monospace;margin-left:5px}
+#api-receipt-preview .alert-countdown{font:22px/1.2 'VT323',monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+#api-receipt-preview .machine{position:relative;height:40px;border-radius:9px;background:var(--machine);border:1px solid light-dark(#cccfd0,#505355);box-shadow:0 5px 12px #0002;padding:7px 13px}
+#api-receipt-preview .slot{height:5px;border-radius:3px;background:light-dark(#555a57,#121714)}
+#api-receipt-preview .machine-label{display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:2px;color:light-dark(#606562,#abb3ae);margin-top:6px}
+#api-receipt-preview .lamp{width:5px;height:5px;background:light-dark(#5d8067,#92ad9a);border-radius:50%}
+#api-receipt-preview .status{position:absolute;left:18px;bottom:7px;font-size:11px;color:light-dark(#626563,#a9aeab)}
+#api-receipt-preview .readback{position:absolute;inset:146px 14px 63px;z-index:30;background:light-dark(#eeefed,#242625);border:1px solid light-dark(#cccfc9,#585b55);border-radius:8px;display:flex;flex-direction:column;padding:12px}
+#api-receipt-preview .readback[hidden]{display:none}
+#api-receipt-preview .readback-nav{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:12px;margin-bottom:10px}
+#api-receipt-preview .readback-content{overflow:auto;flex:1}
+#api-receipt-preview .readback .paper{max-width:302px;margin:auto}
+@media(max-width:400px){#api-receipt-preview .scene{padding:14px;height:820px}#api-receipt-preview .controls{padding-right:0}#api-receipt-preview .assembly{right:14px;width:calc(100% - 28px)}#api-receipt-preview .readback{top:164px}}
+</style>
+<script>
+(() => {
+ const root=document.getElementById('api-receipt-preview');
+ const resetAt=Date.now()+(3*86400+4*3600+22*60)*1000;
+ const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const money=n=>`${n<0?'-':''}$${(Math.abs(n)/10000).toFixed(4)}`;
+ const tokens=n=>n.toLocaleString('en-US');
+ function timestamp(ms){
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)).map(v=>[v.type,v.value]));
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}`;
+ }
+ function durationAtPrint(ms){const mins=Math.max(0,Math.ceil((resetAt-ms)/60000));return `${Math.floor(mins/1440)}天 ${Math.floor(mins%1440/60)}小时 ${mins%60}分`;}
+ function resetCountdown(target){const seconds=Math.max(0,Math.ceil((target-Date.now())/1000));if(!seconds)return '等待额度刷新';const days=Math.floor(seconds/86400),hours=Math.floor(seconds%86400/3600),minutes=Math.floor(seconds%3600/60),rest=seconds%60;return `${days}d ${[hours,minutes,rest].map(n=>String(n).padStart(2,'0')).join(':')}`;}
+ function refreshCountdowns(){root.querySelectorAll('.alert-countdown').forEach(node=>{node.textContent=resetCountdown(Number(node.dataset.resetAt));});}
+ function timeRows(printedAt,includeReset){return `<div class="times"><div class="pair"><span>打印时间</span><time>${timestamp(printedAt)}</time></div>${includeReset?`<div class="pair"><span>重置时间</span><time>${timestamp(resetAt)}</time></div>`:''}</div>`;}
+ function quotaBar(percent){const p=Math.max(0,Math.min(100,percent));return `<div class="quota-row"><span class="quota-bracket" aria-hidden="true">[</span><div class="quota-bar" role="progressbar" aria-label="剩余额度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p}">${Array.from({length:20},(_,i)=>`<span class="quota-cell" aria-hidden="true"><span class="quota-fill" style="width:${Math.min(100,Math.max(0,(p-i*5)*20))}%"></span></span>`).join('')}</div><span class="quota-bracket" aria-hidden="true">]</span></div>`;}
+ function level(kind,value){return value<=0?'red':value<=(kind?20:50000)?'yellow':'normal';}
+ function shouldWarn(kind,before,after){const prior=level(kind,before),next=level(kind,after);return next!=='normal'&&(next!==prior||(!kind&&before===0&&after<0));}
+ function regularMarkup(kind,record){
+  const head=`<div class="brand">账单</div><div class="subtitle">${kind?'PLAN USAGE':'PAY PER USE'}</div><div class="pair"><span>${kind?'ChatGPT 订阅':'论文助手 · …7A2F'}</span><span>#${record.id}</span></div><div class="rule"></div>`;
+  const use=`<div class="pair detail"><span>输入 ${tokens(record.input)}</span><span>输出 ${tokens(record.output)}</span></div><div class="detail">缓存 ${tokens(record.cached)} · 已含在输入中</div>`;
+  if(kind)return `${head}<div class="pair"><span class="muted">本次费用</span><span>使用订阅额度</span></div><div class="hero-label">本次 Token 用量</div><div class="hero-number">${tokens(record.input+record.output)}<small>TOKENS</small></div>${use}<div class="rule"></div><div class="pair"><span>周额度剩余</span><span class="metric">${record.after}%</span></div>${quotaBar(record.after)}<div class="detail">20 格 · 每格 5% · 深色为剩余</div><div class="rule"></div><div class="pair"><span>打印时距重置</span><span>${durationAtPrint(record.printedAt)}</span></div>${timeRows(record.printedAt,true)}<div class="foot">北京时间 · 本票为打印时快照</div>`;
+  return `${head}<div class="hero-label">本次消费 · 预估</div><div class="hero-number">${money(record.cost)}<small>USD</small></div><div class="pair"><span>本次 Token</span><span class="metric">${tokens(record.input+record.output)}</span></div>${use}<div class="rule"></div><div class="hero-label">${record.after<0?'账户结余 · 已欠费':'账户结余 · 预估'}</div><div class="hero-number">${money(record.after)}<small>USD</small></div>${timeRows(record.printedAt,false)}<div class="foot">1 次请求 · 以服务商最终账单为准</div>`;
+ }
+ function warningMarkup(kind,record){
+  const tone=level(kind,record.after),debt=!kind&&record.after<0;
+  const resetInfo=kind&&tone==='red'?`<div class="rule"></div><div class="times"><div class="pair"><span>重置时间</span><time>${timestamp(resetAt)}</time></div><div class="pair"><span>重置倒计时</span><span class="alert-countdown" data-reset-at="${resetAt}">${resetCountdown(resetAt)}</span></div></div>`:'';
+  return `<div class="alert-title">警告</div><div class="alert-label">${kind?'剩余额度':debt?'待补足欠款':'剩余余额'}</div><div class="alert-value">${kind?record.after+'%':money(debt?-record.after:record.after)}${kind?'':'<small>USD</small>'}</div>${kind?quotaBar(record.after):''}${resetInfo}`;
+ }
+ let audioContext;
+ function soundAt(time,duration,volume,frequency){
+  const buffer=audioContext.createBuffer(1,Math.ceil(audioContext.sampleRate*duration),audioContext.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.exp(-i/data.length*5);
+  const source=audioContext.createBufferSource(),filter=audioContext.createBiquadFilter(),gain=audioContext.createGain();
+  source.buffer=buffer;filter.type='bandpass';filter.frequency.value=frequency;gain.gain.value=volume;source.connect(filter);filter.connect(gain);gain.connect(audioContext.destination);source.start(time);
+ }
+ [...root.querySelectorAll('section')].forEach((section,kind)=>{
+  const preview={id:'000128',input:20400,cached:8000,output:1860,cost:421,after:kind?68:199579,printedAt:Date.now()};
+  const extraScenario=kind?'':'<option value="debt">产生负债</option>';
+  section.innerHTML=`<div class="scene"><div class="controls"><button class="single cursor-interaction" type="button">打印一张</button><button class="batch cursor-interaction" type="button">连打 5 张</button><button class="tear cursor-interaction" type="button" disabled>撕下纸带</button><label>情景<select class="scenario"><option value="normal">正常消费</option><option value="low">到达警戒线</option><option value="zero">用尽</option>${extraScenario}</select></label><label class="cursor-interaction"><input class="sound" type="checkbox">打印音效</label><button class="history cursor-interaction" type="button" disabled>查看已出票</button></div><div class="example">模拟数据 · ${kind?'额度警戒线 20%':'余额警戒线 $5'} · <span class="count">样票预览</span></div><div class="assembly" aria-label="${kind?'Codex 连续纸带':'API 连续纸带'}"><div class="window"><div class="strip"><article class="paper sample">${regularMarkup(kind,preview)}</article></div></div><div class="machine"><div class="slot"></div><div class="machine-label"><span>CONTINUOUS RECEIPTS</span><span class="lamp"></span></div></div></div><div class="status" aria-live="polite">未撕下时连续出纸 · 第 4 张进纸即折叠旧票</div><div class="readback" hidden><div class="readback-nav"><button class="prev cursor-interaction" type="button">上一张</button><span class="page-number"></span><button class="next cursor-interaction" type="button">下一张</button><button class="close cursor-interaction" type="button">关闭</button></div><div class="readback-content"></div></div></div>`;
+  const q=s=>section.querySelector(s),single=q('.single'),batch=q('.batch'),tear=q('.tear'),scenario=q('.scenario'),sound=q('.sound'),historyButton=q('.history'),strip=q('.strip'),counter=q('.count'),status=q('.status'),assembly=q('.assembly'),viewer=q('.readback');
+  const queue=[],run=[],history=[];let busy=false,serial=127,value=kind?68.8:200000,viewIndex=0,activeItem=null;
+  const settings={duration:4.2,bounce:10};
+  if(globalThis.Tweak){const tweak=new Tweak({container:assembly,onChange:()=>{}});tweak.addSlider(settings,'duration',{label:'每张打印时长',min:2,max:7,step:.1,unit:'秒'});tweak.addSlider(settings,'bounce',{label:'竖直出纸幅度',min:4,max:16,unit:'px'});}
+  function update(){const count=run.length+(activeItem?1:0);counter.textContent=`连纸 ${count} 张${activeItem?' · 含正在打印':''}${count>3?(activeItem?' · 送纸推动折叠':' · 已形成折痕'):''}${queue.length?` · 等待 ${queue.length} 笔`:''}`;tear.disabled=busy||run.length===0;historyButton.disabled=history.length===0;}
+  function buildAccordion(item){
+   if(item.panels)return;
+   item.flatHeight=item.node.getBoundingClientRect().height;item.projectedHeight=item.flatHeight;
+   const sliceHeight=item.flatHeight/6;
+   item.node.style.height=`${item.flatHeight}px`;item.node.classList.add('accordion');item.node.setAttribute('aria-hidden','true');
+   item.node.innerHTML=Array.from({length:6},(_,i)=>`<div class="fold-panel" style="height:${sliceHeight}px;top:${i*sliceHeight}px"><div class="fold-slice" style="top:${-i*sliceHeight}px;height:${item.flatHeight}px"><div class="paper ${item.tone}">${item.html}</div></div></div><div class="crease-line" style="top:${(i+1)*sliceHeight}px"></div>`).join('');
+   item.panels=[...item.node.querySelectorAll('.fold-panel')];item.creases=[...item.node.querySelectorAll('.crease-line')];
+  }
+  function foldPose(item,projected){const angle=Math.acos(Math.min(1,Math.max(0,projected/item.flatHeight)))*180/Math.PI;return {angle,step:projected/6};}
+  function commitFold(item,height){
+   const pose=foldPose(item,height);item.projectedHeight=height;item.node.style.height=`${height}px`;
+   item.panels.forEach((panel,i)=>{panel.style.top=`${i*pose.step}px`;panel.style.transform=`rotateX(${(i%2?-1:1)*pose.angle}deg)`;panel.style.setProperty('--crease-shade',String(Math.sin(pose.angle*Math.PI/180)*(i%2?.16:.035)));item.creases[i].style.top=`${(i+1)*pose.step}px`;});
+  }
+  function preparePushFolds(distance){
+   if(run.length+1<=3)return [];
+   const plans=[];let absorbed=0;
+   for(let i=run.length-1;i>=0&&absorbed<distance;i--){
+    const item=run[i],start=item.projectedHeight??item.node.getBoundingClientRect().height,capacity=Math.max(0,start-15);
+    if(capacity<.01)continue;
+    buildAccordion(item);
+    const amount=Math.min(capacity,distance-absorbed);plans.push({item,start,end:start-amount,begin:absorbed,amount});absorbed+=amount;
+   }
+   return plans;
+  }
+  function startPushFolds(plans,motion,distance,duration){
+   const animations=[];
+   for(const plan of plans){
+    const frames=motion.stops.map(stop=>{const height=plan.start-Math.min(plan.amount,Math.max(0,distance*stop.progress-plan.begin));return {offset:stop.offset,easing:'steps(1,end)',height,pose:foldPose(plan.item,height)};});
+    const options={duration,easing:'linear',fill:'forwards'};
+    animations.push(plan.item.node.animate(frames.map(f=>({offset:f.offset,easing:f.easing,height:`${f.height}px`})),options));
+    plan.item.panels.forEach((panel,i)=>{
+     animations.push(panel.animate(frames.map(f=>({offset:f.offset,easing:f.easing,top:`${i*f.pose.step}px`,transform:`rotateX(${(i%2?-1:1)*f.pose.angle}deg)`,'--crease-shade':String(Math.sin(f.pose.angle*Math.PI/180)*(i%2?.16:.035))})),options));
+     animations.push(plan.item.creases[i].animate(frames.map(f=>({offset:f.offset,easing:f.easing,top:`${(i+1)*f.pose.step}px`})),options));
+    });
+   }
+   return animations;
+  }
+  function makeTransaction(mode){
+   const number=++serial,factor=[1,1.4,.8][(number-128)%3],cost=Math.round(186*factor)+Math.round(12*factor)+Math.round(223*factor);
+   let before=value;
+   if(mode==='low')before=kind?20.4:50001;
+   if(mode==='zero')before=kind?.8:cost;
+   if(mode==='debt'&&!kind)before=200;
+   const after=kind?Math.max(0,Number((before-.8).toFixed(1))):before-cost;
+   value=after;
+   return {id:String(number).padStart(6,'0'),before,after,cost,input:Math.round(20400*factor),cached:Math.round(8000*factor),output:Math.round(1860*factor),printedAt:Date.now(),warn:shouldWarn(kind,before,after)};
+  }
+  function printFrames(height){
+   const phases=[{to:.17,move:.15,pause:.045},{to:.40,move:.20,pause:.055},{to:.65,move:.19,pause:.035},{to:.84,move:.15,pause:.045},{to:1,move:.13,pause:0}],frames=[],runs=[],stops=[{offset:0,progress:0}];
+   let time=0,progress=0;const pos=p=>`translateY(${((1-p)*height).toFixed(2)}px)`;
+   phases.forEach(p=>{const steps=Math.max(2,Math.round((p.to-progress)*height/2));frames.push({transform:pos(progress),offset:time,easing:`steps(${steps},end)`});runs.push({start:time,length:p.move});for(let j=1;j<=steps;j++)stops.push({offset:Math.min(1,time+p.move*j/steps),progress:progress+(p.to-progress)*j/steps});time+=p.move;frames.push({transform:pos(p.to),offset:Math.min(1,time),easing:'linear'});time+=p.pause;if(p.pause)stops.push({offset:Math.min(1,time),progress:p.to});progress=p.to;});
+   frames.at(-1).offset=1;stops.at(-1).offset=1;return {frames,runs,stops};
+  }
+  async function printDocument(record,type='usage'){
+   const sample=strip.querySelector('.sample');if(sample)sample.remove();
+   const isWarning=type==='warning',label=isWarning?'警告':'消费';
+   const tone=isWarning?level(kind,record.after):'normal';
+   const html=isWarning?warningMarkup(kind,record):regularMarkup(kind,record);
+   const node=document.createElement('article');node.className=`paper ${tone}`;node.dataset.receipt=type;node.dataset.related=record.id;node.setAttribute('aria-label',`${label}小票 ${record.id}`);node.innerHTML=html;
+   strip.appendChild(node);
+   const height=node.getBoundingClientRect().height,motion=printFrames(height),duration=reduced()?80:settings.duration*1000;
+   strip.style.transform=`translateY(${height}px)`;
+   const item={node,html,tone,id:(isWarning?'W':'#')+record.id};activeItem=item;const foldPlans=preparePushFolds(height);update();
+   status.textContent=isWarning?`正在追加${tone==='yellow'?'黄色':'红色'}独立警告票 · W${record.id}`:`正在打印消费票 #${record.id}`;
+   let feed,pop,foldAnimations=[],finished=false;
+   try{
+    if(sound.checked){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!audioContext&&Audio)audioContext=new Audio();if(audioContext){await audioContext.resume();const now=audioContext.currentTime;for(const part of motion.runs)for(let t=.015;t<part.length*duration/1000-.025;t+=.065)soundAt(now+part.start*duration/1000+t,.025,.085,1150);}}catch(e){sound.checked=false;}}
+    feed=strip.animate(reduced()?[{transform:`translateY(${height}px)`},{transform:'translateY(0px)'}]:motion.frames,{duration,easing:'linear',fill:'forwards'});
+    foldAnimations=startPushFolds(foldPlans,motion,height,duration);
+    const startTime=document.timeline?.currentTime;if(typeof startTime==='number'){feed.startTime=startTime;foldAnimations.forEach(animation=>{animation.startTime=startTime;});}
+    await feed.finished;foldPlans.forEach(plan=>commitFold(plan.item,plan.end));foldAnimations.forEach(animation=>animation.cancel());strip.style.transform='translateY(0px)';feed.cancel();
+    if(!reduced()){
+     await pause(200);
+     pop=strip.animate([{transform:'translateY(0px)',offset:0,easing:'cubic-bezier(.16,.8,.3,1)'},{transform:`translateY(-${settings.bounce}px)`,offset:.42,easing:'cubic-bezier(.4,0,.35,1)'},{transform:'translateY(0px)',offset:1}],{duration:440,easing:'linear'});
+     await pop.finished;
+    }
+    run.push(item);activeItem=null;history.push(item);finished=true;update();
+    status.textContent=`${label}票已打印 · ${run.length>3?'纸带已折叠':'仍与前票相连'}`;
+   }catch(error){node.remove();activeItem=null;foldPlans.forEach(plan=>commitFold(plan.item,plan.start));update();throw error;}
+   finally{strip.style.transform='translateY(0px)';foldAnimations.forEach(animation=>animation.cancel());if(!finished)foldPlans.forEach(plan=>commitFold(plan.item,plan.start));if(feed)feed.cancel();if(pop)pop.cancel();}
+  }
+  async function drain(){
+   if(busy)return;busy=true;update();
+   try{
+    while(queue.length){const mode=queue.shift();update();const record=makeTransaction(mode);await printDocument(record);if(record.warn){if(!reduced())await pause(500);await printDocument(record,'warning');}if(queue.length&&!reduced())await pause(500);}
+   }catch(error){queue.length=0;status.textContent='打印中断，请重试';}
+   finally{busy=false;update();}
+  }
+  function enqueue(count){const mode=scenario.value;for(let i=0;i<count;i++)queue.push(i===count-1?mode:'normal');return drain();}
+  single.addEventListener('click',()=>enqueue(1));batch.addEventListener('click',()=>enqueue(5));
+  tear.addEventListener('click',async()=>{
+   if(busy||!run.length)return;busy=true;update();
+   try{if(!reduced()){const removal=strip.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-70px)',opacity:0}],{duration:320,easing:'ease-in'});await removal.finished;removal.cancel();}strip.replaceChildren();run.length=0;status.textContent='纸带已撕下 · 下一张重新开始连纸';}
+   finally{busy=false;update();if(queue.length)void drain();}
+  });
+  function showHistory(){if(!history.length)return;viewIndex=Math.max(0,Math.min(history.length-1,viewIndex));const item=history[viewIndex];q('.readback-content').innerHTML=`<article class="paper ${item.tone}">${item.html}</article>`;q('.page-number').textContent=`${viewIndex+1} / ${history.length}`;q('.prev').disabled=viewIndex===0;q('.next').disabled=viewIndex===history.length-1;viewer.hidden=false;refreshCountdowns();}
+  historyButton.addEventListener('click',()=>{viewIndex=history.length-1;showHistory();});q('.prev').addEventListener('click',()=>{viewIndex--;showHistory();});q('.next').addEventListener('click',()=>{viewIndex++;showHistory();});q('.close').addEventListener('click',()=>{viewer.hidden=true;});
+ });
+ const countdownTimer=setInterval(()=>{if(!root.isConnected){clearInterval(countdownTimer);return;}refreshCountdowns();},1000);
+})();
+</script>
+
+

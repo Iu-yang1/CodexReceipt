@@ -1,0 +1,225 @@
+{
+  "files": [
+    {
+      "path": "api-receipt.html",
+      "bytes": 25453,
+      "sha256": "94fca3f09dbbcfaf20e6559409d2cbb366f6d8c5473ce0650ee234f14a65fcea"
+    },
+    {
+      "path": "receipt-desktop/AccountClient.cs",
+      "bytes": 4215,
+      "sha256": "20f6f89ec6fcd822d5575b4972ec4e12710ee486ea65b70e939eeb1da60a39b6"
+    },
+    {
+      "path": "receipt-desktop/AppPaths.cs",
+      "bytes": 2689,
+      "sha256": "e00ba14a19bf0399b1fd28959cd7b42d4b7adf8bcc746b7977d1ea0e76f695df"
+    },
+    {
+      "path": "receipt-desktop/build-ui.py",
+      "bytes": 18687,
+      "sha256": "a4613a6b661c27c7579774020790be8073775982c52c797e3755def05c775cd1"
+    },
+    {
+      "path": "receipt-desktop/build.ps1",
+      "bytes": 2115,
+      "sha256": "605239e25471ce63f15709eb39b28a95f364c347f32cd51fb05183e7508b7d54"
+    },
+    {
+      "path": "receipt-desktop/CodexLocator.cs",
+      "bytes": 1775,
+      "sha256": "06f27da23bf916448b360cd13be9c709cdb16042526a1706a4341ed5f39f4685"
+    },
+    {
+      "path": "receipt-desktop/download-fonts.py",
+      "bytes": 660,
+      "sha256": "805113e71f23cad6d848f137183516e2d4c8f924b0c80b9d15512ceda860d178"
+    },
+    {
+      "path": "receipt-desktop/download-logo.py",
+      "bytes": 1232,
+      "sha256": "45d633583e4e283940e70c3a75b3e577553d4fb050664b161664646d01b4572d"
+    },
+    {
+      "path": "receipt-desktop/package-ui.py",
+      "bytes": 2181,
+      "sha256": "ac6a1f92a25cb3f2e4908e7cfeda98f4d85a69ac772df26a98214872ef35ada8"
+    },
+    {
+      "path": "receipt-desktop/paper-folds.js",
+      "bytes": 4961,
+      "sha256": "2fa0bfbeb1e373027d34bdccd0dddaf377f41fcb0e363440b43b431eb51e6279"
+    },
+    {
+      "path": "receipt-desktop/paper-interactions.js",
+      "bytes": 6669,
+      "sha256": "c1cd1f8fbf30bdd2045a1b60e1b28a07ca0434d60f00cb48eab74208b3c9ed69"
+    },
+    {
+      "path": "receipt-desktop/paper-marker.js",
+      "bytes": 6292,
+      "sha256": "525f5cf10bdc882af1192470eac9c05a1a76c2b77dfd2cd46c0826246d7fa424"
+    },
+    {
+      "path": "receipt-desktop/paper-tear.js",
+      "bytes": 3902,
+      "sha256": "dcb973cb15dad2c375a0f286cdac93c2e457e67207702fa18cc062e6533d3753"
+    },
+    {
+      "path": "receipt-desktop/Program.cs",
+      "bytes": 21352,
+      "sha256": "efced7dabca556bbcf708102429350a8678236e92e07ae849e891a3d72ad28ea"
+    },
+    {
+      "path": "receipt-desktop/QuotaResetTracker.cs",
+      "bytes": 1740,
+      "sha256": "eb9ea60fd5502adcbde10319a88ad2e4ec57932e8a0955cf6ee34fe5dfb6f953"
+    },
+    {
+      "path": "receipt-desktop/ReceiptTray.csproj",
+      "bytes": 1324,
+      "sha256": "e4701cb84309866327d0a53b9bb1590d9eb2a5786d12cd9089c675887bed63c3"
+    },
+    {
+      "path": "receipt-desktop/ReceiptTrayUi.cs",
+      "bytes": 4614,
+      "sha256": "faecba1d4828da673eceaeafeac73070da5c0e09bf71845caae38847416d1193"
+    },
+    {
+      "path": "receipt-desktop/SelfTest.cs",
+      "bytes": 6350,
+      "sha256": "85522408b18dcffc1c57bf1f96800fa65cc7fb47267a522a23546954f1952c88"
+    },
+    {
+      "path": "receipt-desktop/test-folds.cjs",
+      "bytes": 1638,
+      "sha256": "bdd39aae442d31b6533e02f156dd6d1aef92eeb7eb7e2486cc0efb10cdb46295"
+    },
+    {
+      "path": "receipt-desktop/test-paper.cjs",
+      "bytes": 3310,
+      "sha256": "a0198ae3a34202a6a8a39f2fcf83d6b296ee4a9d2f9761434a8f43904c57974f"
+    },
+    {
+      "path": "receipt-desktop/test-special.cjs",
+      "bytes": 2580,
+      "sha256": "c4431524a55053e7e48de1fbd2654381f0ec01a00de12b0a13b3be8351ec8c08"
+    },
+    {
+      "path": "receipt-desktop/test-tear.cjs",
+      "bytes": 2953,
+      "sha256": "6ae6bd33838863e47e9a85e2d176221f750fa7ad41e99757ac207a9701999743"
+    },
+    {
+      "path": "receipt-desktop/UsageMonitor.cs",
+      "bytes": 8066,
+      "sha256": "2e59b5d4b46298acd69cd4db8f04c9d303f36cee5c2dc7630784287f2afdb53b"
+    },
+    {
+      "path": "receipt-desktop/.gitignore",
+      "bytes": 245,
+      "sha256": "1d38423af647f270bd4f34c8cba5542c3d79025659e9ae2e9aa87c72de9f7f00"
+    },
+    {
+      "path": "receipt-desktop/index.html",
+      "bytes": 61101,
+      "sha256": "4b52195f6baac2e414bacda766788dc999a3dc2c3f9a5a48a71a3f58015355ad"
+    },
+    {
+      "path": "receipt-desktop/packages.lock.json",
+      "bytes": 912,
+      "sha256": "8ffc9e28041d9dfb4b1f21e7ef18d574ff3e8b82be0c1f586d30a837f61e3ce3"
+    },
+    {
+      "path": "receipt-desktop/ui.zip",
+      "bytes": 910324,
+      "sha256": "e3fc83c6a3b3158a9d62a154c36d7e7856afec813027efe31cb1d0be75e04a9c"
+    },
+    {
+      "path": "receipt-desktop/使用说明.txt",
+      "bytes": 6217,
+      "sha256": "4bf644c5b2fc251223872ab278be807e751a6c061e7584348406295946a14f05"
+    },
+    {
+      "path": "receipt-desktop/工程构建说明.txt",
+      "bytes": 2551,
+      "sha256": "d24b3ffc64ea1780df4f605719a958c996d3aa308064a427de90947dcc2836d2"
+    },
+    {
+      "path": "receipt-desktop/assets/codex-symbol-monochrome.svg",
+      "bytes": 1370,
+      "sha256": "0b23657167f4cef34fee7149e010018faa7440e3db729e25eb7f4c62ed89fa10"
+    },
+    {
+      "path": "receipt-desktop/assets/codex-wordmark-monochrome.svg",
+      "bytes": 3054,
+      "sha256": "497b65ef943e7812c126e804f2f78347855a655d88beb0cb0876fc1a3a231843"
+    },
+    {
+      "path": "receipt-desktop/assets/ink-grain.svg",
+      "bytes": 841,
+      "sha256": "ef1db5545849d5bec3a04de0728a07ebaf323f9664c79ab19bccdde3556d27ea"
+    },
+    {
+      "path": "receipt-desktop/assets/来源.txt",
+      "bytes": 176,
+      "sha256": "551d42b8714b56991ac9cf2f69eaa02789be038b689ebb222d9452f0f3508d04"
+    },
+    {
+      "path": "receipt-desktop/fonts/dotgothic16-OFL.txt",
+      "bytes": 4492,
+      "sha256": "b6630c61ea078cacd7fabe37d14ffe557a0b45b06683374a9aa9e24262993e33"
+    },
+    {
+      "path": "receipt-desktop/fonts/DotGothic16-Regular.ttf",
+      "bytes": 2069236,
+      "sha256": "3ad9af88726d42b40f7f365f0dcac785af73cf20ea6f1d5b44e57cc21150b8f1"
+    },
+    {
+      "path": "receipt-desktop/fonts/vt323-OFL.txt",
+      "bytes": 4367,
+      "sha256": "27d9af34210253e7ca1251fbace86c6f65b40031d6ce1a75493a1b2093631298"
+    },
+    {
+      "path": "receipt-desktop/fonts/VT323-Regular.ttf",
+      "bytes": 153116,
+      "sha256": "cf4de751ada78ceac033dbe16a687742939995b77bc2a052ae17a4957958594d"
+    },
+    {
+      "path": "receipt-desktop/licenses/microsoft.netcore.app.runtime.win-x64-LICENSE.TXT",
+      "bytes": 1139,
+      "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+    },
+    {
+      "path": "receipt-desktop/licenses/microsoft.netcore.app.runtime.win-x64-THIRD-PARTY-NOTICES.TXT",
+      "bytes": 78041,
+      "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+    },
+    {
+      "path": "receipt-desktop/licenses/microsoft.windowsdesktop.app.runtime.win-x64-LICENSE",
+      "bytes": 1137,
+      "sha256": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab"
+    },
+    {
+      "path": "receipt-desktop/licenses/WebView2-LICENSE.txt",
+      "bytes": 1487,
+      "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55"
+    },
+    {
+      "path": "receipt-desktop/licenses/WebView2-NOTICE.txt",
+      "bytes": 3894,
+      "sha256": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90"
+    },
+    {
+      "path": "receipt-desktop/export/Windows-x64/CodexReceipt.exe",
+      "bytes": 52909529,
+      "sha256": "cf84567ce7f19f1f184b4765ae479fd9e9aa136488efac4c0693d85396fce0ff"
+    },
+    {
+      "path": "receipt-desktop/export/Windows-x64/使用说明.txt",
+      "bytes": 2853,
+      "sha256": "b628c9d9e1fcb6315c81af64d4c7de83d969b587a3cac48e8c99c0c5dcc57522"
+    }
+  ],
+  "verification": "Relocated UI generation, C# build and tests, and JavaScript tests passed."
+}
